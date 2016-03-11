@@ -38,10 +38,6 @@
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
                      <children>
                         <TableView fx:id="phoneNumberTableView" layoutX="69.0" layoutY="79.0" prefHeight="398.0" prefWidth="295.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                          <columns>
-                            <TableColumn prefWidth="144.0" text="Name" />
-                            <TableColumn minWidth="9.0" prefWidth="150.0" text="Phone number" />
-                          </columns>
                            <columnResizePolicy>
                               <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                            </columnResizePolicy>
@@ -141,6 +137,11 @@
                                     <Insets left="5.0" top="15.0" />
                                  </VBox.margin>
                               </HBox>
+                              <CheckBox mnemonicParsing="false" selected="true" text="WIth header">
+                                 <VBox.margin>
+                                    <Insets left="10.0" />
+                                 </VBox.margin>
+                              </CheckBox>
                            </children>
                         </VBox>
                         <VBox AnchorPane.bottomAnchor="25.0" AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="480.0">

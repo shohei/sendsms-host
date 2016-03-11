@@ -2,9 +2,12 @@ package smsbot;
 
 
 import gnu.io.CommPortIdentifier;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.apache.commons.io.FilenameUtils;
@@ -25,7 +28,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Iterator;
-import java.util.List;
 import java.util.ResourceBundle;
 
 public class Controller implements Initializable {
@@ -34,7 +36,7 @@ public class Controller implements Initializable {
     @FXML
     private ComboBox<String> serialComboBox;
     @FXML
-    private TableView<List<String>> phoneNumberTableView;
+    private TableView phoneNumberTableView;
     @FXML
     private Button serialConnectBtn;
     @FXML
@@ -48,10 +50,29 @@ public class Controller implements Initializable {
     @FXML
     private Button reloadPortBtn;
 
+    private ObservableList<Person> parentsData;
+    private TableColumn firstNameCol;
+    private TableColumn lastNameCol;
+    private TableColumn telephoneCol;
 
-    @Override
     public void initialize(URL fxmlFileLocation, ResourceBundle resources) {
         initComboBox();
+        parentsData = FXCollections.observableArrayList();
+
+        firstNameCol = new TableColumn("First Name");
+        lastNameCol = new TableColumn("Last Name");
+        telephoneCol = new TableColumn("Telephone");
+        phoneNumberTableView.getColumns().addAll(firstNameCol, lastNameCol, telephoneCol);
+        firstNameCol.setCellValueFactory(
+                new PropertyValueFactory<Person,String>("firstName")
+        );
+        lastNameCol.setCellValueFactory(
+                new PropertyValueFactory<Person,String>("lastName")
+        );
+        telephoneCol.setCellValueFactory(
+                new PropertyValueFactory<Person,String>("telephone")
+        );
+
     }
 
     @FXML
@@ -65,9 +86,13 @@ public class Controller implements Initializable {
             filePathLabel.setText(file.toPath().toString());
             String ext = FilenameUtils.getExtension(file.getAbsolutePath());
             if(ext.equals("xlsx")||ext.equals("XLSX")){
+                phoneNumberTableView.getItems().removeAll(phoneNumberTableView.getItems());
                 readXLSX(file);
+                phoneNumberTableView.setItems(parentsData);
             }else if(ext.equals("xls")||ext.equals("XLS")){
+                phoneNumberTableView.getItems().removeAll(phoneNumberTableView.getItems());
                 readXLS(file);
+                phoneNumberTableView.setItems(parentsData);
             }
         }
     }
@@ -102,23 +127,26 @@ public class Controller implements Initializable {
                     Row nextRow = iterator.next();
                     Iterator<Cell> cellIterator = nextRow.cellIterator();
 
+                    int counter=0;
+                    String[] parentInfo = new String[3];
                     while (cellIterator.hasNext()) {
+                        if(counter>3){
+                            break;
+                        }
                         Cell cell = cellIterator.next();
 
                         switch (cell.getCellType()) {
                             case Cell.CELL_TYPE_STRING:
-                                System.out.print(cell.getStringCellValue());
-                                break;
-                            case Cell.CELL_TYPE_BOOLEAN:
-                                System.out.print(cell.getBooleanCellValue());
+                                parentInfo[counter]=cell.getStringCellValue();
                                 break;
                             case Cell.CELL_TYPE_NUMERIC:
-                                System.out.print(cell.getNumericCellValue());
+                                parentInfo[counter]=String.valueOf(cell.getNumericCellValue());
                                 break;
                         }
-                        System.out.print(" - ");
+                        counter++;
                     }
-                    System.out.println();
+                    Person person = new Person(parentInfo[0],parentInfo[1],parentInfo[2]);
+                    parentsData.addAll(person);
                 }
 
                 workbook.close();
@@ -157,13 +185,18 @@ public class Controller implements Initializable {
             for(int r = 0; r < rows; r++) {
                 row = sheet.getRow(r);
                 if(row != null) {
+                    int counter=0;
+                    String[] parentInfo = new String[3];
                     for(int c = 0; c < cols; c++) {
                         cell = row.getCell((short)c);
                         if(cell != null) {
-                            // Your code here
-                            System.out.println(cell.toString());
+//                            System.out.println(cell.toString());
+                            parentInfo[counter]=cell.toString();
                         }
+                        counter++;
                     }
+                    Person person = new Person(parentInfo[0],parentInfo[1],parentInfo[2]);
+                    parentsData.addAll(person);
                 }
             }
         } catch(Exception ioe) {
