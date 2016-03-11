@@ -4,12 +4,11 @@ package smsbot;
 import gnu.io.CommPortIdentifier;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextArea;
-import javafx.scene.text.Text;
+import javafx.scene.control.*;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 
+import java.io.File;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -27,11 +26,38 @@ public class Controller implements Initializable{
     private Button loadExcelBtn;
     @FXML
     private Button sendSmsBtn;
+    @FXML
+    private Label filePathLabel;
+    @FXML
+    private Label fileLoadLabel;
+    @FXML
+    private Button reloadPortBtn;
 
 
     @Override
     public void initialize(URL fxmlFileLocation, ResourceBundle resources) {
         initComboBox();
+    }
+
+    @FXML
+    public void openFileDialog(){
+        FileChooser chooser = new FileChooser();
+        chooser.setTitle("Open Excel file");
+        chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Excel document(*.xls,*xlsx)", "*.xls","*.xlsx"));
+        File file = chooser.showOpenDialog(new Stage());
+        if(file!=null){
+            fileLoadLabel.setText("File location:");
+            filePathLabel.setText(file.toPath().toString());
+        }
+    }
+
+    public void reloadSerialPort(){
+        removeComboBox();
+        initComboBox();
+    }
+
+    public void removeComboBox(){
+        this.serialComboBox.getItems().removeAll(this.serialComboBox.getItems());
     }
 
     public void initComboBox(){
