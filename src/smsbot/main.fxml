@@ -131,9 +131,29 @@
                                           <Insets />
                                        </HBox.margin>
                                     </ComboBox>
-                                    <Button fx:id="serialConnectBtn" mnemonicParsing="false" text="Connect">
+                                    <Label text="Connected to device." textFill="#bc520c">
+                                       <VBox.margin>
+                                          <Insets left="50.0" top="10.0" />
+                                       </VBox.margin>
                                        <HBox.margin>
                                           <Insets left="20.0" />
+                                       </HBox.margin>
+                                    </Label>
+                                 </children>
+                                 <VBox.margin>
+                                    <Insets top="5.0" />
+                                 </VBox.margin>
+                              </HBox>
+                              <HBox>
+                                 <children>
+                                    <Button mnemonicParsing="false" onAction="#connectToSerialPort" text="Connect">
+                                       <HBox.margin>
+                                          <Insets left="5.0" />
+                                       </HBox.margin>
+                                    </Button>
+                                    <Button mnemonicParsing="false" onAction="#disconnectFromSerialPort" text="Disconnect">
+                                       <HBox.margin>
+                                          <Insets left="10.0" />
                                        </HBox.margin>
                                     </Button>
                                     <Button fx:id="reloadPortBtn" mnemonicParsing="false" onAction="#reloadSerialPort" text="Reload port">
@@ -141,16 +161,16 @@
                                           <Insets left="10.0" />
                                        </HBox.margin>
                                     </Button>
+                                    <Button mnemonicParsing="false" onAction="#sendToSerialPort" text="Send">
+                                       <HBox.margin>
+                                          <Insets left="10.0" />
+                                       </HBox.margin>
+                                    </Button>
                                  </children>
                                  <VBox.margin>
-                                    <Insets top="5.0" />
+                                    <Insets top="10.0" />
                                  </VBox.margin>
                               </HBox>
-                              <Label text="Successfully connected to device." textFill="#bc520c">
-                                 <VBox.margin>
-                                    <Insets left="50.0" top="10.0" />
-                                 </VBox.margin>
-                              </Label>
                            </children>
                         </VBox>
                         <VBox AnchorPane.bottomAnchor="25.0" AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="450.0">

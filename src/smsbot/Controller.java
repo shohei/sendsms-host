@@ -2,6 +2,7 @@ package smsbot;
 
 
 import gnu.io.CommPortIdentifier;
+import gnu.io.NoSuchPortException;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -57,17 +58,9 @@ public class Controller implements Initializable {
     @FXML
     private TableView phoneNumberTableView;
     @FXML
-    private Button serialConnectBtn;
-    @FXML
-    private Button loadExcelBtn;
-    @FXML
-    private Button sendSmsBtn;
-    @FXML
     private Label filePathLabel;
     @FXML
     private Label fileLoadLabel;
-    @FXML
-    private Button reloadPortBtn;
     @FXML
     private CheckBox withHeaderCheckbox;
     @FXML
@@ -79,6 +72,9 @@ public class Controller implements Initializable {
     private TableColumn telephoneCol;
 
     public static final int MAX_SMS_LENGTH = 160;
+    public TwoWaySerialComm twoWaySerialComm;
+
+    SerialSender sender;
 
     public void initialize(URL fxmlFileLocation, ResourceBundle resources) {
         initComboBox();
@@ -142,8 +138,8 @@ public class Controller implements Initializable {
     }
 
 
-    public void initActionListenerForTextArea(){
-        messageLengthLabel.setText("0/"+String.valueOf(MAX_SMS_LENGTH));
+    public void initActionListenerForTextArea() {
+        messageLengthLabel.setText("0/" + String.valueOf(MAX_SMS_LENGTH));
 
         messageTextArea.textProperty().addListener(new ChangeListener<String>() {
             @Override
@@ -153,12 +149,12 @@ public class Controller implements Initializable {
                     messageTextArea.setText(s);
                 }
                 int mLength = messageTextArea.getLength();
-                messageLengthLabel.setText(String.valueOf(mLength)+"/"+String.valueOf(MAX_SMS_LENGTH));
+                messageLengthLabel.setText(String.valueOf(mLength) + "/" + String.valueOf(MAX_SMS_LENGTH));
             }
         });
     }
 
-    public void messageSendingDialog(){
+    public void messageSendingDialog() {
         Service<Void> service = new Service<Void>() {
             @Override
             protected Task<Void> createTask() {
@@ -188,13 +184,46 @@ public class Controller implements Initializable {
         service.start();
     }
 
+    @FXML
+    public void disconnectFromSerialPort() {
+        sender.disconnect();
+    }
+
+    @FXML
+    public void sendToSerialPort(){
+        sender.send();
+    }
+
+    @FXML
+    public void connectToSerialPort() {
+        try {
+            String serialPort = serialComboBox.getValue();
+//            twoWaySerialComm =  new TwoWaySerialComm();
+//            twoWaySerialComm.connect(serialPort, 19200);
+              sender = new SerialSender();
+              sender.connect(serialPort,19200);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } catch (SerialSender.PortAlreadyUsedException ex){
+            showDialogPortUsed();
+        }
+    }
+
+    public void showDialogPortUsed() {
+        Dialogs.create()
+                .title("Warning")
+                .masthead(null)
+                .message("Already connected to the serial port!\n" +
+                        "Disconnect and try again.")
+                .showInformation();
+    }
 
     public void showAlertRemind() {
         String msg = messageTextArea.getText();
         Action response = Dialogs.create()
                 .title("Confirmation ")
                 .masthead("Are you sure to send SMS?")
-                .message("Following message will be sent:\n\n"+msg)
+                .message("Following message will be sent:\n\n" + msg)
                 .actions(Dialog.Actions.OK, Dialog.Actions.CANCEL)
                 .showConfirm();
 
@@ -241,10 +270,10 @@ public class Controller implements Initializable {
         //TODO:
     }
 
-    public boolean isHeaderIncluded(){
-        if(withHeaderCheckbox.isSelected()){
-           return true;
-        }else{
+    public boolean isHeaderIncluded() {
+        if (withHeaderCheckbox.isSelected()) {
+            return true;
+        } else {
             return false;
         }
     }
@@ -258,12 +287,12 @@ public class Controller implements Initializable {
                 Sheet firstSheet = workbook.getSheetAt(0);
                 Iterator<Row> iterator = firstSheet.iterator();
 
-                int rowCounter=0;
+                int rowCounter = 0;
                 while (iterator.hasNext()) {
                     Row nextRow = iterator.next();
                     Iterator<Cell> cellIterator = nextRow.cellIterator();
 
-                    if(rowCounter==0&&isHeaderIncluded()){
+                    if (rowCounter == 0 && isHeaderIncluded()) {
                         rowCounter++;
                         continue;
                     }
@@ -273,12 +302,12 @@ public class Controller implements Initializable {
                         Cell cell = cellIterator.next();
                         switch (cell.getCellType()) {
                             case Cell.CELL_TYPE_STRING:
-                                if(counter<3){
+                                if (counter < 3) {
                                     parentInfo[counter] = cell.getStringCellValue();
                                 }
                                 break;
                             case Cell.CELL_TYPE_NUMERIC:
-                                if(counter<3) {
+                                if (counter < 3) {
                                     parentInfo[counter] = String.valueOf(cell.getNumericCellValue());
                                 }
                                 break;
@@ -333,14 +362,14 @@ public class Controller implements Initializable {
                 if (row != null) {
                     int counter = 0;
                     String[] parentInfo = new String[3];
-                    if(r==0&&isHeaderIncluded()){
+                    if (r == 0 && isHeaderIncluded()) {
                         continue;
                     }
                     for (int c = 0; c < cols; c++) {
                         cell = row.getCell((short) c);
                         if (cell != null) {
 //                            System.out.println(cell.toString());
-                            if(counter<3){
+                            if (counter < 3) {
                                 parentInfo[counter] = cell.toString();
                             }
                         }
@@ -360,7 +389,7 @@ public class Controller implements Initializable {
         while (portEnum.hasMoreElements()) {
             CommPortIdentifier portIdentifier = portEnum.nextElement();
             System.out.println(portIdentifier.getName());
-            this.serialComboBox.getItems().addAll(portIdentifier.getName());
+            serialComboBox.getItems().addAll(portIdentifier.getName());
         }
     }
 
