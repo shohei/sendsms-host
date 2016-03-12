@@ -186,26 +186,29 @@ public class Controller implements Initializable {
 
     @FXML
     public void disconnectFromSerialPort() {
-        sender.disconnect();
+//        sender.disconnect();
+        twoWaySerialComm.disconnect();
     }
 
     @FXML
     public void sendToSerialPort(){
-        sender.send();
+//        String msg = "{\"tel\":\"23328503949\",\"message\":\"hello from TTI\"}";
+//        sender.send(msg);
+        twoWaySerialComm.send();
     }
 
     @FXML
     public void connectToSerialPort() {
         try {
             String serialPort = serialComboBox.getValue();
-//            twoWaySerialComm =  new TwoWaySerialComm();
-//            twoWaySerialComm.connect(serialPort, 19200);
-              sender = new SerialSender();
-              sender.connect(serialPort,19200);
+            twoWaySerialComm =  new TwoWaySerialComm();
+            twoWaySerialComm.connect(serialPort, 19200);
+//              sender = new SerialSender();
+//              sender.connect(serialPort,19200);
         } catch (Exception e) {
             e.printStackTrace();
-        } catch (SerialSender.PortAlreadyUsedException ex){
-            showDialogPortUsed();
+//        } catch (SerialSender.PortAlreadyUsedException ex){
+//            showDialogPortUsed();
         }
     }
 

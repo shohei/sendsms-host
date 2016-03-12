@@ -24,9 +24,12 @@ public class SerialSender {
         serialPort.close();
     }
 
-    void send(){
+    void send(String msg){
         try{
-            out.write('a');
+            char[] charArray = msg.toCharArray();
+            for(int i=0;i<charArray.length;i++){
+                out.write(charArray[i]);
+            }
             out.write('\r');
         }catch(Exception e){
             e.printStackTrace();

@@ -10,7 +10,7 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="smsbot.Controller">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="smsbot.Controller">
    <children>
       <VBox prefHeight="600.0" prefWidth="800.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
@@ -33,7 +33,7 @@
                 </Menu>
               </menus>
             </MenuBar>
-            <SplitPane dividerPositions="0.41478696741854637" layoutX="117.0" layoutY="71.0" prefHeight="590.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <SplitPane dividerPositions="0.531062124248497" layoutX="117.0" layoutY="71.0" prefHeight="590.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
               <items>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
                      <children>
@@ -46,11 +46,11 @@
                   </AnchorPane>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
                      <children>
-                        <VBox AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="50.0">
+                        <HBox layoutX="15.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
-                              <HBox>
+                              <VBox prefHeight="569.0" prefWidth="234.0">
                                  <children>
-                                    <Label text="Edit message">
+                                    <Label text="Message">
                                        <VBox.margin>
                                           <Insets left="5.0" />
                                        </VBox.margin>
@@ -58,21 +58,50 @@
                                           <Font name="System Bold" size="13.0" />
                                        </font>
                                     </Label>
-                                    <Label fx:id="messageLengthLabel">
-                                       <HBox.margin>
-                                          <Insets left="200.0" />
-                                       </HBox.margin>
-                                    </Label>
+                                    <HBox>
+                                       <children>
+                                          <RadioButton mnemonicParsing="false" text="Free text">
+                                             <VBox.margin>
+                                                <Insets left="10.0" top="10.0" />
+                                             </VBox.margin>
+                                             <HBox.margin>
+                                                <Insets left="20.0" />
+                                             </HBox.margin>
+                                          </RadioButton>
+                                          <Label fx:id="messageLengthLabel">
+                                             <HBox.margin>
+                                                <Insets left="50.0" />
+                                             </HBox.margin>
+                                          </Label>
+                                       </children>
+                                       <VBox.margin>
+                                          <Insets top="5.0" />
+                                       </VBox.margin>
+                                    </HBox>
+                                    <TextArea fx:id="messageTextArea" prefHeight="180.0" promptText="Text message goes here..." wrapText="true">
+                                       <VBox.margin>
+                                          <Insets left="20.0" right="20.0" top="15.0" />
+                                       </VBox.margin>
+                                    </TextArea>
                                  </children>
-                              </HBox>
-                              <TextArea fx:id="messageTextArea" prefHeight="100.0" prefWidth="350.0" promptText="Text message goes here..." wrapText="true">
-                                 <VBox.margin>
-                                    <Insets left="20.0" top="15.0" />
-                                 </VBox.margin>
-                              </TextArea>
+                              </VBox>
+                              <VBox>
+                                 <children>
+                                    <RadioButton mnemonicParsing="false" text="Score">
+                                       <VBox.margin>
+                                          <Insets top="20.0" />
+                                       </VBox.margin>
+                                    </RadioButton>
+                                    <TextArea layoutX="278.0" prefHeight="180.0" prefWidth="194.0" promptText="Template">
+                                       <VBox.margin>
+                                          <Insets left="20.0" right="20.0" top="15.0" />
+                                       </VBox.margin>
+                                    </TextArea>
+                                 </children>
+                              </VBox>
                            </children>
-                        </VBox>
-                        <VBox layoutX="5.0" layoutY="250.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="220.0">
+                        </HBox>
+                        <VBox layoutX="5.0" layoutY="250.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="280.0">
                            <children>
                               <Label text="Load Excel file">
                                  <font>
@@ -114,7 +143,7 @@
                               </CheckBox>
                            </children>
                         </VBox>
-                        <VBox layoutX="5.0" layoutY="25.0" AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="350.0">
+                        <VBox layoutX="5.0" layoutY="25.0" AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="380.0">
                            <children>
                               <Label layoutX="5.0" layoutY="25.0" text="Connect to device">
                                  <font>
@@ -173,7 +202,7 @@
                               </HBox>
                            </children>
                         </VBox>
-                        <VBox AnchorPane.bottomAnchor="25.0" AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="450.0">
+                        <VBox AnchorPane.bottomAnchor="25.0" AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="480.0">
                            <children>
                               <Label text="Send SMS">
                                  <font>

@@ -14,25 +14,56 @@ import java.io.OutputStream;
 public class TwoWaySerialComm {
 
     SerialPort serialPort;
-    Thread t1;
-    Thread t2;
+    InputStream in;
+    OutputStream out;
+    SerialReader serialReader;
+    SerialWriter serialWriter;
+//    Thread t1;
+//    Thread t2;
+
+    void send() {
+        try {
+            out.write('a');
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+//    void disconnect() {
+//        if (serialPort != null) {
+//            new Thread() {
+//                @Override
+//                public void run() {
+//                    System.out.println("try disconnection.");
+//                    System.out.println("Close I/O stream.");
+//                    try{
+//                        in.close();
+//                        out.close();
+//                    } catch(Exception e){
+//                        e.printStackTrace();
+//                    }
+//                    System.out.println("Shutdown Reader/Writer.");
+//                    serialReader.shutdown = true;
+//                    serialWriter.shutdown = true;
+//                    System.out.println("Closing port.");
+//                    serialPort.removeEventListener();
+//                    serialPort.close();
+//                    System.out.println("disconnected.");
+//                }
+//            }.start();
+//        }
+//    }
 
     void disconnect() {
         if (serialPort != null) {
-            new Thread() {
-                @Override
-                public void run() {
-                    System.out.println("interrupting threads.");
-                    t1.interrupt();
-                    t2.interrupt();
-//                    t1.stop();
-//                    t2.stop();
-                    System.out.println("done. closing port");
-                    serialPort.removeEventListener();
-                    serialPort.close();
-                    System.out.println("disconnected.");
-                }
-            }.start();
+            System.out.println("try disconnection.");
+            System.out.println("Shutdown Reader/Writer.");
+            serialReader.shutdown();
+            serialWriter.shutdown();
+            System.out.println("Closing port.");
+            serialPort.removeEventListener();
+            serialPort.close();
+            System.out.println("disconnected.");
         }
     }
 
@@ -52,16 +83,14 @@ public class TwoWaySerialComm {
                         SerialPort.STOPBITS_1,
                         SerialPort.PARITY_NONE);
 
-                InputStream in = serialPort.getInputStream();
-                OutputStream out = serialPort.getOutputStream();
+                in = serialPort.getInputStream();
+                out = serialPort.getOutputStream();
 
-                SerialReader serialReader = new SerialReader(in);
-                SerialWriter serialWriter = new SerialWriter(out);
+                serialReader = new SerialReader(in);
+                serialWriter = new SerialWriter(out);
 
-                t1 = new Thread(serialReader);
-                t2 = new Thread(serialWriter);
-                t1.start();
-                t2.start();
+                (new Thread(serialReader)).start();
+                (new Thread(serialWriter)).start();
                 System.out.println("Connected to serial port.");
             } else {
                 System.out.println("Error: Only serial ports are handled by this example.");
@@ -72,49 +101,59 @@ public class TwoWaySerialComm {
     public static class SerialReader implements Runnable {
 
         InputStream in;
+        private volatile boolean shutdown = false;
 
         public SerialReader(InputStream in) {
             this.in = in;
         }
 
+        public void shutdown(){
+            shutdown = true;
+        }
+
         @Override
         public void run() {
-            while (!Thread.currentThread().isInterrupted()) {
+            while (!shutdown) {
                 byte[] buffer = new byte[1024];
                 int len = -1;
                 try {
-                    while ((len = this.in.read(buffer)) > -1) {
+                    while (((len = this.in.read(buffer)) > -1) && !shutdown) {
                         System.out.print(new String(buffer, 0, len));
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
-            System.out.println("reader shutdown");
+            System.out.println("out while reader");
         }
     }
 
     public static class SerialWriter implements Runnable {
 
         OutputStream out;
+        private volatile boolean shutdown = false;
 
         public SerialWriter(OutputStream out) {
             this.out = out;
         }
 
+        public void shutdown() {
+            shutdown = true;
+        }
+
         @Override
         public void run() {
-            while (!Thread.currentThread().isInterrupted()) {
+            while (!shutdown) {
                 try {
                     int c = 0;
-                    while ((c = System.in.read()) > -1) {
+                    while (((c = System.in.read()) > -1) && !shutdown) {
                         this.out.write(c);
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
-            System.out.println("writer shutdown");
+            System.out.println("out while writer");
         }
     }
 }
