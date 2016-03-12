@@ -192,9 +192,8 @@ public class Controller implements Initializable {
 
     @FXML
     public void sendToSerialPort(){
-//        String msg = "{\"tel\":\"23328503949\",\"message\":\"hello from TTI\"}";
-//        sender.send(msg);
-        twoWaySerialComm.send();
+        String msg = "{\"tel\":\"23328503949\",\"message\":\"hello from TTI\"}";
+        twoWaySerialComm.send(msg);
     }
 
     @FXML

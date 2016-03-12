@@ -24,17 +24,17 @@ public class SerialSender {
         serialPort.close();
     }
 
-    void send(String msg){
-        try{
-            char[] charArray = msg.toCharArray();
-            for(int i=0;i<charArray.length;i++){
-                out.write(charArray[i]);
-            }
-            out.write('\r');
-        }catch(Exception e){
-            e.printStackTrace();
-        }
-    }
+//    void send(String msg){
+//        try{
+//            char[] charArray = msg.toCharArray();
+//            for(int i=0;i<charArray.length;i++){
+//                out.write(charArray[i]);
+//            }
+//            out.write('\r');
+//        }catch(Exception e){
+//            e.printStackTrace();
+//        }
+//    }
 
     void connect(String portName, int baudrate) throws Exception,PortAlreadyUsedException {
         CommPortIdentifier portIdentifier = CommPortIdentifier

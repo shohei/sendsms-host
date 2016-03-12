@@ -18,52 +18,48 @@ public class TwoWaySerialComm {
     OutputStream out;
     SerialReader serialReader;
     SerialWriter serialWriter;
-//    Thread t1;
-//    Thread t2;
 
-    void send() {
+    void send(String msg) {
         try {
-            out.write('a');
+            char[] charArray = msg.toCharArray();
+            for (int i = 0; i < charArray.length; i++) {
+                out.write(charArray[i]);
+            }
+            out.write('\r');
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-//    void disconnect() {
-//        if (serialPort != null) {
-//            new Thread() {
-//                @Override
-//                public void run() {
-//                    System.out.println("try disconnection.");
-//                    System.out.println("Close I/O stream.");
-//                    try{
-//                        in.close();
-//                        out.close();
-//                    } catch(Exception e){
-//                        e.printStackTrace();
-//                    }
-//                    System.out.println("Shutdown Reader/Writer.");
-//                    serialReader.shutdown = true;
-//                    serialWriter.shutdown = true;
-//                    System.out.println("Closing port.");
-//                    serialPort.removeEventListener();
-//                    serialPort.close();
-//                    System.out.println("disconnected.");
-//                }
-//            }.start();
-//        }
-//    }
-
     void disconnect() {
         if (serialPort != null) {
-            System.out.println("try disconnection.");
-            System.out.println("Shutdown Reader/Writer.");
-            serialReader.shutdown();
-            serialWriter.shutdown();
-            System.out.println("Closing port.");
-            serialPort.removeEventListener();
-            serialPort.close();
-            System.out.println("disconnected.");
+            new Thread() {
+                @Override
+                public void run() {
+                    System.out.println("try disconnection.");
+                    System.out.println("Close I/O stream.");
+                    try {
+                        in.close();
+                        out.close();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    System.out.println("Shutdown Reader/Writer.");
+                    serialReader.shutdown();
+                    serialWriter.shutdown();
+                    System.out.write('z');//hack for stop thread
+                    System.out.println();
+                    try {
+                        Thread.sleep(2000);
+                    } catch (InterruptedException ex) {
+                        ex.printStackTrace();
+                    }
+                    serialPort.removeEventListener();
+                    serialPort.close();
+                    System.out.println("Closing port.");
+                    System.out.println("disconnected.");
+                }
+            }.start();
         }
     }
 
@@ -82,6 +78,8 @@ public class TwoWaySerialComm {
                         SerialPort.DATABITS_8,
                         SerialPort.STOPBITS_1,
                         SerialPort.PARITY_NONE);
+
+                serialPort.enableReceiveTimeout(1000);
 
                 in = serialPort.getInputStream();
                 out = serialPort.getOutputStream();
@@ -107,7 +105,7 @@ public class TwoWaySerialComm {
             this.in = in;
         }
 
-        public void shutdown(){
+        public void shutdown() {
             shutdown = true;
         }
 
@@ -117,14 +115,18 @@ public class TwoWaySerialComm {
                 byte[] buffer = new byte[1024];
                 int len = -1;
                 try {
-                    while (((len = this.in.read(buffer)) > -1) && !shutdown) {
+                    while ((len = this.in.read(buffer)) > -1) {
                         System.out.print(new String(buffer, 0, len));
+                        if (shutdown) {
+                            System.out.println("out while reader");
+                            Thread.currentThread().interrupt();
+                            return;
+                        }
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
-            System.out.println("out while reader");
         }
     }
 
@@ -146,14 +148,18 @@ public class TwoWaySerialComm {
             while (!shutdown) {
                 try {
                     int c = 0;
-                    while (((c = System.in.read()) > -1) && !shutdown) {
+                    while (((c = System.in.read()) > -1)) {
                         this.out.write(c);
+                        if (shutdown) {
+                            System.out.println("out while writer");
+                            Thread.currentThread().interrupt();
+                            return;
+                        }
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
-            System.out.println("out while writer");
         }
     }
 }
