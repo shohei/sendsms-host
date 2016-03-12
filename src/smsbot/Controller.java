@@ -2,8 +2,12 @@ package smsbot;
 
 
 import gnu.io.CommPortIdentifier;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Service;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
@@ -66,14 +70,19 @@ public class Controller implements Initializable {
     private Button reloadPortBtn;
     @FXML
     private CheckBox withHeaderCheckbox;
+    @FXML
+    private Label messageLengthLabel;
 
     private ObservableList<Person> parentsData;
     private TableColumn firstNameCol;
     private TableColumn lastNameCol;
     private TableColumn telephoneCol;
 
+    public static final int MAX_SMS_LENGTH = 160;
+
     public void initialize(URL fxmlFileLocation, ResourceBundle resources) {
         initComboBox();
+        initActionListenerForTextArea();
         parentsData = FXCollections.observableArrayList();
 
         firstNameCol = new TableColumn("First Name");
@@ -132,22 +141,71 @@ public class Controller implements Initializable {
                 .showInformation();
     }
 
+
+    public void initActionListenerForTextArea(){
+        messageLengthLabel.setText("0/"+String.valueOf(MAX_SMS_LENGTH));
+
+        messageTextArea.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(final ObservableValue<? extends String> observable, final String oldValue, final String newValue) {
+                if (messageTextArea.getText().length() > MAX_SMS_LENGTH) {
+                    String s = messageTextArea.getText().substring(0, MAX_SMS_LENGTH);
+                    messageTextArea.setText(s);
+                }
+                int mLength = messageTextArea.getLength();
+                messageLengthLabel.setText(String.valueOf(mLength)+"/"+String.valueOf(MAX_SMS_LENGTH));
+            }
+        });
+    }
+
+    public void messageSendingDialog(){
+        Service<Void> service = new Service<Void>() {
+            @Override
+            protected Task<Void> createTask() {
+                return new Task<Void>() {
+                    @Override
+                    protected Void call()
+                            throws InterruptedException {
+                        updateMessage("Finding friends . . .");
+                        updateProgress(0, 10);
+                        for (int i = 0; i < 10; i++) {
+                            Thread.sleep(300);
+                            updateProgress(i + 1, 10);
+                            updateMessage("Found " + (i + 1) + " friends!");
+                        }
+                        updateMessage("Found all.");
+                        return null;
+                    }
+                };
+            }
+        };
+
+        Dialogs.create()
+                .title("Progress dialog")
+                .masthead("Sending SMS. Please wait until finished.")
+                .showWorkerProgress(service);
+
+        service.start();
+    }
+
+
     public void showAlertRemind() {
+        String msg = messageTextArea.getText();
         Action response = Dialogs.create()
                 .title("Confirmation ")
-                .masthead(null)
-                .message("Are you sure to send SMS?")
+                .masthead("Are you sure to send SMS?")
+                .message("Following message will be sent:\n\n"+msg)
                 .actions(Dialog.Actions.OK, Dialog.Actions.CANCEL)
                 .showConfirm();
 
         if (response == Dialog.Actions.OK) {
             String message = messageTextArea.getText();
             System.out.println(message);
+            messageSendingDialog();
         } else {
             //do nothing
         }
     }
-
 
     public void showAlertNoMessage() {
         Dialogs.create()

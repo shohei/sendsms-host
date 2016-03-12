@@ -46,63 +46,33 @@
                   </AnchorPane>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
                      <children>
-                        <VBox AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="15.0">
+                        <VBox AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="50.0">
                            <children>
-                              <Label text="Edit message">
-                                 <VBox.margin>
-                                    <Insets left="5.0" />
-                                 </VBox.margin>
-                                 <font>
-                                    <Font name="System Bold" size="13.0" />
-                                 </font>
-                              </Label>
-                              <TextArea fx:id="messageTextArea" prefHeight="200.0" prefWidth="350.0" promptText="Text message goes here...">
+                              <HBox>
+                                 <children>
+                                    <Label text="Edit message">
+                                       <VBox.margin>
+                                          <Insets left="5.0" />
+                                       </VBox.margin>
+                                       <font>
+                                          <Font name="System Bold" size="13.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="messageLengthLabel">
+                                       <HBox.margin>
+                                          <Insets left="200.0" />
+                                       </HBox.margin>
+                                    </Label>
+                                 </children>
+                              </HBox>
+                              <TextArea fx:id="messageTextArea" prefHeight="100.0" prefWidth="350.0" promptText="Text message goes here..." wrapText="true">
                                  <VBox.margin>
                                     <Insets left="20.0" top="15.0" />
                                  </VBox.margin>
                               </TextArea>
                            </children>
                         </VBox>
-                        <VBox layoutX="5.0" layoutY="25.0" AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="280.0">
-                           <children>
-                              <Label layoutX="5.0" layoutY="25.0" text="Connect to device">
-                                 <font>
-                                    <Font name="System Bold" size="13.0" />
-                                 </font>
-                              </Label>
-                              <HBox>
-                                 <children>
-                                    <ComboBox fx:id="serialComboBox" layoutX="122.0" layoutY="25.0" prefWidth="250.0" promptText="Select serial port" AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="25.0">
-                                       <VBox.margin>
-                                          <Insets left="5.0" right="5.0" top="5.0" />
-                                       </VBox.margin>
-                                       <HBox.margin>
-                                          <Insets />
-                                       </HBox.margin>
-                                    </ComboBox>
-                                    <Button fx:id="serialConnectBtn" mnemonicParsing="false" text="Connect">
-                                       <HBox.margin>
-                                          <Insets left="20.0" />
-                                       </HBox.margin>
-                                    </Button>
-                                    <Button fx:id="reloadPortBtn" mnemonicParsing="false" onAction="#reloadSerialPort" text="Reload port">
-                                       <HBox.margin>
-                                          <Insets left="10.0" />
-                                       </HBox.margin>
-                                    </Button>
-                                 </children>
-                                 <VBox.margin>
-                                    <Insets top="5.0" />
-                                 </VBox.margin>
-                              </HBox>
-                              <Label text="Successfully connected to device." textFill="#bc520c">
-                                 <VBox.margin>
-                                    <Insets left="50.0" top="10.0" />
-                                 </VBox.margin>
-                              </Label>
-                           </children>
-                        </VBox>
-                        <VBox layoutX="5.0" layoutY="250.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="380.0">
+                        <VBox layoutX="5.0" layoutY="250.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="220.0">
                            <children>
                               <Label text="Load Excel file">
                                  <font>
@@ -144,7 +114,46 @@
                               </CheckBox>
                            </children>
                         </VBox>
-                        <VBox AnchorPane.bottomAnchor="25.0" AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="480.0">
+                        <VBox layoutX="5.0" layoutY="25.0" AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="350.0">
+                           <children>
+                              <Label layoutX="5.0" layoutY="25.0" text="Connect to device">
+                                 <font>
+                                    <Font name="System Bold" size="13.0" />
+                                 </font>
+                              </Label>
+                              <HBox>
+                                 <children>
+                                    <ComboBox fx:id="serialComboBox" layoutX="122.0" layoutY="25.0" prefWidth="250.0" promptText="Select serial port" AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="25.0">
+                                       <VBox.margin>
+                                          <Insets left="5.0" right="5.0" top="5.0" />
+                                       </VBox.margin>
+                                       <HBox.margin>
+                                          <Insets />
+                                       </HBox.margin>
+                                    </ComboBox>
+                                    <Button fx:id="serialConnectBtn" mnemonicParsing="false" text="Connect">
+                                       <HBox.margin>
+                                          <Insets left="20.0" />
+                                       </HBox.margin>
+                                    </Button>
+                                    <Button fx:id="reloadPortBtn" mnemonicParsing="false" onAction="#reloadSerialPort" text="Reload port">
+                                       <HBox.margin>
+                                          <Insets left="10.0" />
+                                       </HBox.margin>
+                                    </Button>
+                                 </children>
+                                 <VBox.margin>
+                                    <Insets top="5.0" />
+                                 </VBox.margin>
+                              </HBox>
+                              <Label text="Successfully connected to device." textFill="#bc520c">
+                                 <VBox.margin>
+                                    <Insets left="50.0" top="10.0" />
+                                 </VBox.margin>
+                              </Label>
+                           </children>
+                        </VBox>
+                        <VBox AnchorPane.bottomAnchor="25.0" AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="450.0">
                            <children>
                               <Label text="Send SMS">
                                  <font>
@@ -153,7 +162,7 @@
                               </Label>
                               <HBox layoutX="55.0" layoutY="470.0">
                                  <children>
-                                    <Label layoutX="55.0" layoutY="470.0" text="Are you sure to send?" />
+                                    <Label layoutX="55.0" layoutY="470.0" text="Send SMS to all recipients" />
                                     <Button fx:id="sendSmsBtn" layoutX="223.0" layoutY="479.0" mnemonicParsing="false" onAction="#doSendSms" prefWidth="100.0" text="Send" textOverrun="WORD_ELLIPSIS">
                                        <HBox.margin>
                                           <Insets left="20.0" />
@@ -161,27 +170,10 @@
                                     </Button>
                                  </children>
                                  <VBox.margin>
-                                    <Insets left="5.0" top="5.0" />
+                                    <Insets left="5.0" top="15.0" />
                                  </VBox.margin>
                               </HBox>
                               <HBox>
-                                 <children>
-                                    <Label layoutX="63.0" layoutY="520.0" text="SMS sending..." textFill="#1f50f2">
-                                       <HBox.margin>
-                                          <Insets left="5.0" />
-                                       </HBox.margin>
-                                    </Label>
-                                    <ProgressBar prefWidth="150.0" progress="0.0">
-                                       <HBox.margin>
-                                          <Insets left="10.0" />
-                                       </HBox.margin>
-                                    </ProgressBar>
-                                    <Label layoutX="62.0" layoutY="540.0" text="SMS sent successfully!" textFill="#25bf32">
-                                       <HBox.margin>
-                                          <Insets left="20.0" />
-                                       </HBox.margin>
-                                    </Label>
-                                 </children>
                                  <VBox.margin>
                                     <Insets top="10.0" />
                                  </VBox.margin>
