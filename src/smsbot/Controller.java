@@ -72,9 +72,8 @@ public class Controller implements Initializable {
     private TableColumn telephoneCol;
 
     public static final int MAX_SMS_LENGTH = 160;
-    public TwoWaySerialComm twoWaySerialComm;
+    public static TwoWaySerialComm twoWaySerialComm;
 
-    SerialSender sender;
 
     public void initialize(URL fxmlFileLocation, ResourceBundle resources) {
         initComboBox();
@@ -187,7 +186,9 @@ public class Controller implements Initializable {
     @FXML
     public void disconnectFromSerialPort() {
 //        sender.disconnect();
-        twoWaySerialComm.disconnect();
+        if(twoWaySerialComm!=null){
+            twoWaySerialComm.disconnect();
+        }
     }
 
     @FXML
