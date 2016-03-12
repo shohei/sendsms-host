@@ -6,10 +6,18 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.VBoxBuilder;
+import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
+import jfxtras.labs.dialogs.MonologFXButton;
+import jfxtras.labs.dialogs.MonologFXButtonBuilder;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -21,6 +29,9 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
+import org.controlsfx.control.action.Action;
+import org.controlsfx.dialog.Dialog;
+import org.controlsfx.dialog.Dialogs;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -97,6 +108,58 @@ public class Controller implements Initializable {
         }
     }
 
+    @FXML
+    public void doSendSms(){
+        if(isMessageWritten()){
+            showAlertRemind();
+        }else{
+            showAlertNoMessage();
+        }
+    }
+
+    @FXML
+    public void showAboutDialog(){
+        Dialogs.create()
+                .title("About this software")
+                .masthead("SendSMS")
+                .message("(c)2016 Shohei Aoki. All Rights Reserved.")
+                .showInformation();
+    }
+
+    public void showAlertRemind() {
+        Action response = Dialogs.create()
+                .title("Confirmation ")
+                .masthead(null)
+                .message("Are you sure to send SMS?")
+                .actions(Dialog.Actions.OK, Dialog.Actions.CANCEL)
+                .showConfirm();
+
+        if (response == Dialog.Actions.OK) {
+            String message = messageTextArea.getText();
+            System.out.println(message);
+        } else {
+            //do nothing
+        }
+    }
+
+
+    public void showAlertNoMessage(){
+        Dialogs.create()
+                .title("Information")
+                .masthead(null)
+                .message("Please input message before sending SMS!")
+                .showInformation();
+    }
+
+    public boolean isMessageWritten(){
+        if(messageTextArea.getLength() >0){
+            return true;
+        }else {
+            return false;
+        }
+    }
+
+    @FXML
     public void reloadSerialPort() {
         removeComboBox();
         initComboBox();

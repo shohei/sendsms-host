@@ -18,18 +18,18 @@
               <menus>
                 <Menu mnemonicParsing="false" text="File">
                   <items>
-                    <MenuItem mnemonicParsing="false" text="Close" />
+                    <MenuItem mnemonicParsing="false" onAction="#showAboutDialog" text="About" />
                   </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Edit">
-                  <items>
-                    <MenuItem mnemonicParsing="false" text="Delete" />
-                  </items>
+                  <!--<items>-->
+                    <!--<MenuItem mnemonicParsing="false" text="Delete" />-->
+                  <!--</items>-->
                 </Menu>
                 <Menu mnemonicParsing="false" text="Help">
-                  <items>
-                    <MenuItem mnemonicParsing="false" text="About" />
-                  </items>
+                  <!--<items>-->
+                    <!--<MenuItem mnemonicParsing="false" text="About" />-->
+                  <!--</items>-->
                 </Menu>
               </menus>
             </MenuBar>
@@ -95,7 +95,7 @@
                                     <Insets top="5.0" />
                                  </VBox.margin>
                               </HBox>
-                              <Label text="Successfully connected to smsbot!" textFill="#bc520c">
+                              <Label text="Successfully connected to device." textFill="#bc520c">
                                  <VBox.margin>
                                     <Insets left="50.0" top="10.0" />
                                  </VBox.margin>
@@ -154,7 +154,7 @@
                               <HBox layoutX="55.0" layoutY="470.0">
                                  <children>
                                     <Label layoutX="55.0" layoutY="470.0" text="Are you sure to send?" />
-                                    <Button fx:id="sendSmsBtn" layoutX="223.0" layoutY="479.0" mnemonicParsing="false" prefWidth="100.0" text="Send" textOverrun="WORD_ELLIPSIS">
+                                    <Button fx:id="sendSmsBtn" layoutX="223.0" layoutY="479.0" mnemonicParsing="false" onAction="#doSendSms" prefWidth="100.0" text="Send" textOverrun="WORD_ELLIPSIS">
                                        <HBox.margin>
                                           <Insets left="20.0" />
                                        </HBox.margin>
@@ -171,6 +171,11 @@
                                           <Insets left="5.0" />
                                        </HBox.margin>
                                     </Label>
+                                    <ProgressBar prefWidth="150.0" progress="0.0">
+                                       <HBox.margin>
+                                          <Insets left="10.0" />
+                                       </HBox.margin>
+                                    </ProgressBar>
                                     <Label layoutX="62.0" layoutY="540.0" text="SMS sent successfully!" textFill="#25bf32">
                                        <HBox.margin>
                                           <Insets left="20.0" />
