@@ -13,7 +13,6 @@ import java.util.Enumeration;
 import java.util.HashSet;
 
 public class Main extends Application {
-    Controller c;
 
     @Override
     public void start(Stage primaryStage) throws Exception {

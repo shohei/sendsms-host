@@ -137,7 +137,7 @@
                                     <Insets left="5.0" top="15.0" />
                                  </VBox.margin>
                               </HBox>
-                              <CheckBox mnemonicParsing="false" selected="true" text="WIth header">
+                              <CheckBox fx:id="withHeaderCheckbox" mnemonicParsing="false" selected="true" text="WIth header">
                                  <VBox.margin>
                                     <Insets left="10.0" />
                                  </VBox.margin>
