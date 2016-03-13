@@ -80,6 +80,9 @@ public class Controller implements Initializable {
     //    private String[] columnNames;
     private List<String> columnNames;
 
+    public int row_length;
+    public int col_length;
+
     public void initialize(URL fxmlFileLocation, ResourceBundle resources) {
 
         initComboBox();
@@ -119,11 +122,11 @@ public class Controller implements Initializable {
                 phoneNumberTableView.getColumns().clear();
                 synchronized (this) {
                     readXLSX(file);
-//                    if (!textRadioBtn.isSelected()) {
-//                        updateTemplateMessage();
-//                    } else {
-//                        removeTemplateMessage();
-//                    }
+                    if (!textRadioBtn.isSelected()) {
+                        updateTemplateMessage();
+                    } else {
+                        removeTemplateMessage();
+                    }
                 }
             } else if (ext.equals("xls") || ext.equals("XLS")) {//When old XLS format
                 phoneNumberTableView.getItems().removeAll(phoneNumberTableView.getItems());
@@ -206,7 +209,6 @@ public class Controller implements Initializable {
 
     @FXML
     public void disconnectFromSerialPort() {
-//        sender.disconnect();
         if (twoWaySerialComm != null) {
             twoWaySerialComm.disconnect();
         }
@@ -226,25 +228,21 @@ public class Controller implements Initializable {
             String serialPort = serialComboBox.getValue();
             twoWaySerialComm = new TwoWaySerialComm();
             twoWaySerialComm.connect(serialPort, 19200);
-//              sender = new SerialSender();
-//              sender.connect(serialPort,19200);
             connectedLabel.setText("Connected from device.");
             disconnectedLabel.setText("");
         } catch (Exception e) {
             e.printStackTrace();
-//        } catch (SerialSender.PortAlreadyUsedException ex){
-//            showDialogPortUsed();
         }
     }
 
-    public void showDialogPortUsed() {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Warning");
-        alert.setHeaderText(null);
-        alert.setContentText("Already connected to the serial port!\n" +
-                "Disconnect and try again.");
-        alert.showAndWait();
-    }
+//    public void showDialogPortUsed() {
+//        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+//        alert.setTitle("Warning");
+//        alert.setHeaderText(null);
+//        alert.setContentText("Already connected to the serial port!\n" +
+//                "Disconnect and try again.");
+//        alert.showAndWait();
+//    }
 
     public void showAlertRemind() {
         String msg = messageTextArea.getText();
@@ -304,79 +302,6 @@ public class Controller implements Initializable {
         }
     }
 
-//    public void readXLSXForFreeText(File file) {
-//        FileInputStream inputStream;
-//        try {
-//            inputStream = new FileInputStream(file);
-//            try {
-//                Workbook workbook = new XSSFWorkbook(inputStream);
-//                Sheet firstSheet = workbook.getSheetAt(0);
-//                Iterator<Row> iterator = firstSheet.iterator();
-//
-//                columnNames = new ArrayList<String>();
-//
-//                int rowCounter = 0;
-//                while (iterator.hasNext()) {
-//                    Row nextRow = iterator.next();
-//                    Iterator<Cell> cellIterator = nextRow.cellIterator();
-//
-//                    //Only for first line. Needed for parsing title header
-//                    if (rowCounter == 0 && isHeaderIncluded()) {
-//                        int counter = 0;
-//                        while (cellIterator.hasNext()) {
-//                            Cell cell = cellIterator.next();
-//                            switch (cell.getCellType()) {
-//                                case Cell.CELL_TYPE_STRING:
-//                                    columnNames.add(counter, cell.getStringCellValue());
-//                                    break;
-//                            }
-//                            counter++;
-//                        }
-//                        rowCounter++;//for this, never called again in loop
-//
-//                        System.out.println("break the loop");
-//                        addColumnToTable(columnNames);
-//                    }
-//
-//                    /*
-//                    int counter = 0;
-//                    String[] parentInfo = new String[3];
-//                    while (cellIterator.hasNext()) {
-//                        Cell cell = cellIterator.next();
-//                        switch (cell.getCellType()) {
-//                            case Cell.CELL_TYPE_STRING:
-//                                if (counter < 3) {
-//                                    parentInfo[counter] = cell.getStringCellValue();
-//                                }
-//                                break;
-//                            case Cell.CELL_TYPE_NUMERIC:
-//                                if (counter < 3) {
-//                                    parentInfo[counter] = String.valueOf(cell.getNumericCellValue());
-//                                }
-//                                break;
-//                        }
-//                        counter++;
-//                    }
-//                    Person person = new Person(parentInfo[0], parentInfo[1], parentInfo[2]);
-//                    personsData.addAll(person);
-//                    rowCounter++;
-//                    */
-//                }
-//
-//                workbook.close();
-//                inputStream.close();
-//            } catch (IOException ex) {
-//                ex.printStackTrace();
-//            }
-//        } catch (
-//                FileNotFoundException ex
-//                )
-//
-//        {
-//            ex.printStackTrace();
-//        }
-//
-//    }
 
     public void readXLSForFreeText(File file) {
         try {
@@ -458,40 +383,31 @@ public class Controller implements Initializable {
                         }
                         rowCounter++;//for this, never called again in loop
 
-                        System.out.println("break the loop");
                         addColumnToTable(columnNames);
                         continue;//needed!!
                     }
 
-                    int counter = 0;
-//                    String[] parentInfo = new String[3];
-                    System.out.println(rowCounter);
+                    int col_counter = 0;
                     ObservableList<String> row = FXCollections.observableArrayList();
-//                    List<String> values = new ArrayList<>();
                     while (cellIterator.hasNext()) {
                         Cell cell = cellIterator.next();
                         switch (cell.getCellType()) {
                             case Cell.CELL_TYPE_STRING:
-//                                parentInfo[counter] = cell.getStringCellValue();
                                 row.addAll(cell.getStringCellValue());
-//                                values.add(counter,cell.getStringCellValue());
                                 break;
                             case Cell.CELL_TYPE_NUMERIC:
-//                                parentInfo[counter] = String.valueOf(cell.getNumericCellValue());
                                 row.addAll(String.valueOf(cell.getNumericCellValue()));
-//                                values.add(counter,String.valueOf(cell.getNumericCellValue()));
                                 break;
                         }
-                        counter++;
+                        col_counter++;
                     }
-                    System.out.println(row.toString());
                     phoneNumberTableView.getItems().add(row);
 
-//                    phoneNumberTableView.getItems().add(values);
-//                    Student student = new Student(parentInfo[0], parentInfo[1], parentInfo[2]);
-//                    studentData.addAll(student);
+                    col_length = col_counter;
                     rowCounter++;
                 }
+
+                row_length = rowCounter;
                 workbook.close();
                 inputStream.close();
             } catch (IOException ex) {
@@ -557,62 +473,31 @@ public class Controller implements Initializable {
         }
     }
 
-    public void updateTemplateMessage() {
-        /*
-        TableColumn col = (TableColumn<?,?>)phoneNumberTableView.getColumns().get(0);
-        String data = (String) col.getCellObservableValue(0).getValue();
-        System.out.println(data);
-*/
+    public void sliceAllTable(){
+        for (int i = 0; i < row_length-1; i++) {
+            List<String> person = new ArrayList<>();
+            for (int j = 0; j < col_length; j++) {
+                TableColumn col = (TableColumn<?, ?>) phoneNumberTableView.getColumns().get(j);
+                String data = (String) col.getCellObservableValue(i).getValue();
+                person.add(data);
+            }
+            System.out.println(person);
+        }
+    }
 
-//        System.out.println(phoneNumberTableView.getColumns().get(0));
-//        int rowIndex = phoneNumberTableView.getSelectionModel().getSelectedIndex();
-//        ObservableList rowList =
-//                (ObservableList) phoneNumberTableView.getItems().get(0);
-//
-//        System.out.println(rowList.toString());
-//        int columnIndex = 0;
-//        int value = Integer.parseInt(rowList.get(columnIndex).toString());
-//        System.out.println(value);
+    public void updateTemplateMessage() {
+            List<String> person = new ArrayList<>();
+            for (int j = 0; j < col_length; j++) {
+                TableColumn col = (TableColumn<?, ?>) phoneNumberTableView.getColumns().get(j);
+                String data = (String) col.getCellObservableValue(0).getValue();
+                person.add(data);
+            }
+            System.out.println(person);
+
     }
 
     public void removeTemplateMessage() {
     }
 
-
-    public void addRowToTable() {
-//        ObservableList<String> row = FXCollections.observableArrayList();
-        ObservableList<String> row1 = FXCollections.observableArrayList();
-//        row.addAll("d1");
-//        row.addAll("d11");
-        row1.addAll("d2");
-        row1.addAll("d22");
-        phoneNumberTableView.getItems().add(row1);
-    }
-
-    public void test() {
-        List<String> columns = new ArrayList<String>();
-        columns.add("col1");
-        columns.add("col2");
-        TableColumn[] tableColumns = new TableColumn[columns.size()];
-        int columnIndex = 0;
-        for (int i = 0; i < columns.size(); i++) {
-            final int j = i;
-            TableColumn col = new TableColumn(columns.get(i));
-            col.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ObservableList, String>, ObservableValue<String>>() {
-                public ObservableValue<String> call(TableColumn.CellDataFeatures<ObservableList, String> param) {
-                    return new SimpleStringProperty(param.getValue().get(j).toString());
-                }
-            });
-            phoneNumberTableView.getColumns().addAll(col);
-        }
-        ObservableList<String> row = FXCollections.observableArrayList();
-        ObservableList<String> row1 = FXCollections.observableArrayList();
-        row.addAll("d1");
-        row.addAll("d11");
-        row1.addAll("d2");
-        row1.addAll("d22");
-        phoneNumberTableView.getItems().add(row);
-        phoneNumberTableView.getItems().add(row1);
-    }
 
 }
