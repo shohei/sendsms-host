@@ -220,19 +220,25 @@ public class Controller implements Initializable {
     public void serialSendFreeText(int row){
         TableColumn col = (TableColumn<?, ?>) phoneNumberTableView.getColumns().get(3);
         String telephone = (String) col.getCellObservableValue(row).getValue();
-        String freetext = messageTextArea.getText();
-        String escapedMsg = StringEscapeUtils.escapeJson(freetext);
-        String msg = "{\"tel\":\""+telephone+"\",\"message\":\""+escapedMsg+"\"}";
-        twoWaySerialComm.send(msg);
+        if(isValidPhoneNumber(telephone)){
+            String freetext = messageTextArea.getText();
+            String escapedMsg = StringEscapeUtils.escapeJson(freetext);
+            String parsedTel = parsePhoneNumber(telephone);
+            String msg = "{\"tel\":\""+parsedTel+"\",\"message\":\""+escapedMsg+"\"}";
+            twoWaySerialComm.send(msg);
+        }
     }
 
     public void serialSendTemplate(int row){
         TableColumn col = (TableColumn<?, ?>) phoneNumberTableView.getColumns().get(3);
         String telephone = (String) col.getCellObservableValue(row).getValue();
-        String freetext = templateTextArea.getText();
-        String escapedMsg = StringEscapeUtils.escapeJson(freetext);
-        String msg = "{\"tel\":\""+telephone+"\",\"message\":\""+escapedMsg+"\"}";
-        twoWaySerialComm.send(msg);
+        if(isValidPhoneNumber(telephone)){
+            String freetext = templateTextArea.getText();
+            String escapedMsg = StringEscapeUtils.escapeJson(freetext);
+            String parsedTel = parsePhoneNumber(telephone);
+            String msg = "{\"tel\":\""+parsedTel+"\",\"message\":\""+escapedMsg+"\"}";
+            twoWaySerialComm.send(msg);
+        }
     }
 
 
@@ -322,12 +328,36 @@ public class Controller implements Initializable {
         this.serialComboBox.getItems().removeAll(this.serialComboBox.getItems());
     }
 
-    public void parsePhoneNumber() {
-        //TODO:
+    public String parsePhoneNumber(String phoneNumber) {
+        String tel;
+        switch(phoneNumber.length()){
+            case 9://241943721 - number
+                tel = "+233" + phoneNumber;
+                return tel;
+            case 10://0241943721 - string with 0
+                StringBuilder sb = new StringBuilder(phoneNumber);
+                sb.deleteCharAt(0);
+                tel = "+233" + sb.toString();
+                return tel;
+            case 12://233241943721 - with Int'l number
+                tel = "+" + phoneNumber;
+                return tel;
+            default:
+                return "";
+        }
     }
 
-    public void validatePhoneNumber() {
-        //TODO:
+    public boolean isValidPhoneNumber(String phoneNumber) {
+        switch (phoneNumber.length()){
+            case 9:
+                return true;
+            case 10:
+                return true;
+            case 12:
+                return true;
+            default:
+                return false;
+        }
     }
 
     public boolean isHeaderIncluded() {
