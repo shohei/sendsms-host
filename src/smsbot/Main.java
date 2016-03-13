@@ -15,18 +15,21 @@ import java.io.*;
 import java.lang.reflect.Field;
 import java.net.URL;
 import java.nio.channels.FileChannel;
+import java.nio.file.DirectoryNotEmptyException;
+import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 
 
 public class Main extends Application {
     Controller c;
+    String firstPath;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+
         if (OSUtils.isWindows()) {
-            addLibraryPath();
             extractJarFromResource();
         }
-
 
         Parent root = FXMLLoader.load(getClass().getResource("main.fxml"));
         FXMLLoader loader = new FXMLLoader(getClass().getResource("main.fxml"));
@@ -47,8 +50,18 @@ public class Main extends Application {
         //In case serial port not disconnected
         if (Controller.twoWaySerialComm != null) {
             c.disconnectFromSerialPort();
+            //Unload .dll before deleting
+            //I gave up to delete dll. To do this, defining another class loader is required.
+//            if (OSUtils.isWindows()) {
+//                deleteTemporalDll();
+//            }
             Platform.exit();
             System.exit(0);
+        }else{
+            //Same thing above
+//            if (OSUtils.isWindows()) {
+//                deleteTemporalDll();
+//            }
         }
     }
 
@@ -92,30 +105,26 @@ public class Main extends Application {
             e.printStackTrace();
         }
 
+        String tmpdir = System.getProperty("java.io.tmpdir");
+
+        String srcFile;
         if (OSUtils.is32bit()) {
             //load .dll for 32bit
-            String tmpdir = System.getProperty("java.io.tmpdir");
-            String srcFile = tmpdir + "SendSMS" + java.io.File.separator + "rxtxSerial.dll";
-            String destFile = tmpdir + "rxtxSerial.dll";
-            try {
-                copyFile(new File(srcFile),new File(destFile));
-//                System.load(destFile);
-                System.loadLibrary("rxtxSerial");
-            } catch (IOException e){
-                e.printStackTrace();
-            }
+            srcFile = tmpdir + "SendSMS" + java.io.File.separator + "rxtxSerial.dll";
         } else {
             //load .dll for 64bit
-            String tmpdir = System.getProperty("java.io.tmpdir");
-            String srcFile = tmpdir + "SendSMS" + java.io.File.separator + "rxtxSerial64.dll";
-            String destFile = tmpdir + "rxtxSerial.dll";
-            try {
-                copyFile(new File(srcFile),new File(destFile));
-//                System.load(destFile);
-                System.loadLibrary("rxtxSerial");
-            } catch (IOException e){
-                e.printStackTrace();
-            }
+            srcFile = tmpdir + "SendSMS" + java.io.File.separator + "rxtxSerial64.dll";
+        }
+
+        //move .dll to java.library.path
+        String destFile = System.getProperty("user.dir") + File.separator + "rxtxSerial.dll";
+        System.out.println("Copying rxtxSerial.dll to user.dir");
+        System.out.println("Destination: "+destFile);
+        try {
+            copyFile(new File(srcFile),new File(destFile));
+            System.loadLibrary("rxtxSerial");
+        } catch (IOException e){
+            e.printStackTrace();
         }
     }
 
@@ -174,6 +183,21 @@ public class Main extends Application {
         }
     }
 
+    public void deleteTemporalDll(){
+        String destFile = System.getProperty("user.dir") + File.separator + "rxtxSerial.dll";
+        File dllFile = new File(destFile);
+        try {
+            dllFile.delete();
+            if(dllFile.delete()){
+                System.out.println(dllFile.getName() + " is deleted!");
+            }else{
+                System.out.println("Delete operation is failed.");
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
 //    public void listFiles() {
 //        File folder = new File("/");
 //        File[] listOfFiles = folder.listFiles();
@@ -187,21 +211,21 @@ public class Main extends Application {
 //        }
 //    }
 
-    public void addLibraryPath(){
-        String tmpdir = System.getProperty("java.io.tmpdir");
-//        String srcFile = tmpdir + "SendSMS" + java.io.File.separator + "rxtxSerial64.dll";
-//        String destFile = tmpdir + "rxtxSerial.dll";
-        System.setProperty( "java.library.path", "tmpdir" );
-        try {
-            Field fieldSysPath = ClassLoader.class.getDeclaredField( "sys_paths" );
-            fieldSysPath.setAccessible( true );
-            fieldSysPath.set( null, null );
-        } catch(IllegalAccessException e){
-            e.printStackTrace();
-        } catch(NoSuchFieldException e){
-            e.printStackTrace();
-        }
-    }
+//    public void addLibraryPath(){
+//        String tmpdir = System.getProperty("java.io.tmpdir");
+////        String srcFile = tmpdir + "SendSMS" + java.io.File.separator + "rxtxSerial64.dll";
+////        String destFile = tmpdir + "rxtxSerial.dll";
+//        System.setProperty( "java.library.path", "tmpdir" );
+//        try {
+//            Field fieldSysPath = ClassLoader.class.getDeclaredField( "sys_paths" );
+//            fieldSysPath.setAccessible( true );
+//            fieldSysPath.set( null, null );
+//        } catch(IllegalAccessException e){
+//            e.printStackTrace();
+//        } catch(NoSuchFieldException e){
+//            e.printStackTrace();
+//        }
+//    }
 
 }
 
