@@ -92,7 +92,7 @@
                                           <Insets top="30.0" />
                                        </VBox.margin>
                                     </RadioButton>
-                                    <TextArea fx:id="templateTextArea" disable="true" layoutX="278.0" prefHeight="180.0" prefWidth="194.0" promptText="Template">
+                                    <TextArea fx:id="templateTextArea" disable="true" editable="false" layoutX="278.0" prefHeight="180.0" prefWidth="194.0" promptText="Template">
                                        <VBox.margin>
                                           <Insets left="20.0" right="20.0" top="15.0" />
                                        </VBox.margin>

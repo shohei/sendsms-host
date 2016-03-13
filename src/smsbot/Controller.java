@@ -2,6 +2,7 @@ package smsbot;
 
 
 import gnu.io.CommPortIdentifier;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -18,6 +19,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -29,6 +31,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.xmlbeans.impl.xb.xmlconfig.NamespaceList;
 import org.controlsfx.dialog.ProgressDialog;
 
 import java.io.File;
@@ -36,9 +39,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Iterator;
-import java.util.Optional;
-import java.util.ResourceBundle;
+import java.util.*;
 
 public class Controller implements Initializable {
     @FXML
@@ -48,6 +49,7 @@ public class Controller implements Initializable {
     @FXML
     private ComboBox<String> serialComboBox;
     @FXML
+//    private TableView<List<String>> phoneNumberTableView;
     private TableView phoneNumberTableView;
     @FXML
     private Label filePathLabel;
@@ -75,9 +77,11 @@ public class Controller implements Initializable {
     public static final int MAX_SMS_LENGTH = 160;
     public static TwoWaySerialComm twoWaySerialComm;
 
-    private String[] columnNames;
+    //    private String[] columnNames;
+    private List<String> columnNames;
 
     public void initialize(URL fxmlFileLocation, ResourceBundle resources) {
+
         initComboBox();
         initRadioGroup();
         initActionListenerForTextArea();
@@ -112,21 +116,24 @@ public class Controller implements Initializable {
             String ext = FilenameUtils.getExtension(file.getAbsolutePath());
             if (ext.equals("xlsx") || ext.equals("XLSX")) {//When new XLSX format
                 phoneNumberTableView.getItems().removeAll(phoneNumberTableView.getItems());
-                if (textRadioBtn.isSelected()) {
-                    readXLSXForFreeText(file);
-                    phoneNumberTableView.setItems(personsData);
-                } else {
-                    readXLSXForTemplate(file);
-                    phoneNumberTableView.setItems(studentData);
+                phoneNumberTableView.getColumns().clear();
+                synchronized (this) {
+                    readXLSX(file);
+//                    if (!textRadioBtn.isSelected()) {
+//                        updateTemplateMessage();
+//                    } else {
+//                        removeTemplateMessage();
+//                    }
                 }
             } else if (ext.equals("xls") || ext.equals("XLS")) {//When old XLS format
                 phoneNumberTableView.getItems().removeAll(phoneNumberTableView.getItems());
                 if (textRadioBtn.isSelected()) {
+                    phoneNumberTableView.getColumns().clear();
                     readXLSForFreeText(file);
-                    phoneNumberTableView.setItems(personsData);
+//                    phoneNumberTableView.setItems(personsData);
                 } else {
+                    phoneNumberTableView.getColumns().clear();
                     readXLSForTemplate(file);
-                    phoneNumberTableView.setItems(studentData);
                 }
             }
         }
@@ -146,8 +153,8 @@ public class Controller implements Initializable {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("About this software");
         alert.setHeaderText(null);
-        alert.setContentText("(c)2016 Shohei Aoki. All Rights Reserved.");
-
+        alert.setContentText("SendSMS version " + InfoUtil.VERSION + "\n\n" +
+                "(c)2016 Shohei Aoki. All Rights Reserved.");
         alert.showAndWait();
     }
 
@@ -297,61 +304,79 @@ public class Controller implements Initializable {
         }
     }
 
-    public void readXLSXForFreeText(File file) {
-        FileInputStream inputStream;
-        try {
-            inputStream = new FileInputStream(file);
-            try {
-                Workbook workbook = new XSSFWorkbook(inputStream);
-                Sheet firstSheet = workbook.getSheetAt(0);
-                Iterator<Row> iterator = firstSheet.iterator();
-
-                int rowCounter = 0;
-                while (iterator.hasNext()) {
-                    Row nextRow = iterator.next();
-                    Iterator<Cell> cellIterator = nextRow.cellIterator();
-
-                    if (rowCounter == 0 && isHeaderIncluded()) {
-                        rowCounter++;
-                        continue;
-                    }
-                    int counter = 0;
-                    String[] parentInfo = new String[3];
-                    while (cellIterator.hasNext()) {
-                        Cell cell = cellIterator.next();
-                        switch (cell.getCellType()) {
-                            case Cell.CELL_TYPE_STRING:
-                                if (counter < 3) {
-                                    parentInfo[counter] = cell.getStringCellValue();
-                                }
-                                break;
-                            case Cell.CELL_TYPE_NUMERIC:
-                                if (counter < 3) {
-                                    parentInfo[counter] = String.valueOf(cell.getNumericCellValue());
-                                }
-                                break;
-                        }
-                        counter++;
-                    }
-                    Person person = new Person(parentInfo[0], parentInfo[1], parentInfo[2]);
-                    personsData.addAll(person);
-                    rowCounter++;
-                }
-
-                workbook.close();
-                inputStream.close();
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
-        } catch (
-                FileNotFoundException ex
-                )
-
-        {
-            ex.printStackTrace();
-        }
-
-    }
+//    public void readXLSXForFreeText(File file) {
+//        FileInputStream inputStream;
+//        try {
+//            inputStream = new FileInputStream(file);
+//            try {
+//                Workbook workbook = new XSSFWorkbook(inputStream);
+//                Sheet firstSheet = workbook.getSheetAt(0);
+//                Iterator<Row> iterator = firstSheet.iterator();
+//
+//                columnNames = new ArrayList<String>();
+//
+//                int rowCounter = 0;
+//                while (iterator.hasNext()) {
+//                    Row nextRow = iterator.next();
+//                    Iterator<Cell> cellIterator = nextRow.cellIterator();
+//
+//                    //Only for first line. Needed for parsing title header
+//                    if (rowCounter == 0 && isHeaderIncluded()) {
+//                        int counter = 0;
+//                        while (cellIterator.hasNext()) {
+//                            Cell cell = cellIterator.next();
+//                            switch (cell.getCellType()) {
+//                                case Cell.CELL_TYPE_STRING:
+//                                    columnNames.add(counter, cell.getStringCellValue());
+//                                    break;
+//                            }
+//                            counter++;
+//                        }
+//                        rowCounter++;//for this, never called again in loop
+//
+//                        System.out.println("break the loop");
+//                        addColumnToTable(columnNames);
+//                    }
+//
+//                    /*
+//                    int counter = 0;
+//                    String[] parentInfo = new String[3];
+//                    while (cellIterator.hasNext()) {
+//                        Cell cell = cellIterator.next();
+//                        switch (cell.getCellType()) {
+//                            case Cell.CELL_TYPE_STRING:
+//                                if (counter < 3) {
+//                                    parentInfo[counter] = cell.getStringCellValue();
+//                                }
+//                                break;
+//                            case Cell.CELL_TYPE_NUMERIC:
+//                                if (counter < 3) {
+//                                    parentInfo[counter] = String.valueOf(cell.getNumericCellValue());
+//                                }
+//                                break;
+//                        }
+//                        counter++;
+//                    }
+//                    Person person = new Person(parentInfo[0], parentInfo[1], parentInfo[2]);
+//                    personsData.addAll(person);
+//                    rowCounter++;
+//                    */
+//                }
+//
+//                workbook.close();
+//                inputStream.close();
+//            } catch (IOException ex) {
+//                ex.printStackTrace();
+//            }
+//        } catch (
+//                FileNotFoundException ex
+//                )
+//
+//        {
+//            ex.printStackTrace();
+//        }
+//
+//    }
 
     public void readXLSForFreeText(File file) {
         try {
@@ -403,7 +428,7 @@ public class Controller implements Initializable {
         }
     }
 
-    public void readXLSXForTemplate(File file) {
+    public void readXLSX(File file) {
         FileInputStream inputStream;
         try {
             inputStream = new FileInputStream(file);
@@ -411,16 +436,8 @@ public class Controller implements Initializable {
                 Workbook workbook = new XSSFWorkbook(inputStream);
                 Sheet firstSheet = workbook.getSheetAt(0);
                 Iterator<Row> iterator = firstSheet.iterator();
-                //count the total length of column
 
-                Row nextRow1 = iterator.next();
-                Iterator<Cell> cellIterator1 = nextRow1.cellIterator();
-                int len = 0;
-                while (cellIterator1.hasNext()) {
-                    len++;
-                }
-
-                columnNames = new String[len];
+                columnNames = new ArrayList<String>();
 
                 int rowCounter = 0;
                 while (iterator.hasNext()) {
@@ -434,34 +451,47 @@ public class Controller implements Initializable {
                             Cell cell = cellIterator.next();
                             switch (cell.getCellType()) {
                                 case Cell.CELL_TYPE_STRING:
-                                    columnNames[counter] = cell.getStringCellValue();
+                                    columnNames.add(counter, cell.getStringCellValue());
                                     break;
                             }
                             counter++;
                         }
                         rowCounter++;//for this, never called again in loop
-                        continue;
+
+                        System.out.println("break the loop");
+                        addColumnToTable(columnNames);
+                        continue;//needed!!
                     }
 
                     int counter = 0;
-                    String[] parentInfo = new String[3];
+//                    String[] parentInfo = new String[3];
+                    System.out.println(rowCounter);
+                    ObservableList<String> row = FXCollections.observableArrayList();
+//                    List<String> values = new ArrayList<>();
                     while (cellIterator.hasNext()) {
                         Cell cell = cellIterator.next();
                         switch (cell.getCellType()) {
                             case Cell.CELL_TYPE_STRING:
-                                parentInfo[counter] = cell.getStringCellValue();
+//                                parentInfo[counter] = cell.getStringCellValue();
+                                row.addAll(cell.getStringCellValue());
+//                                values.add(counter,cell.getStringCellValue());
                                 break;
                             case Cell.CELL_TYPE_NUMERIC:
-                                parentInfo[counter] = String.valueOf(cell.getNumericCellValue());
+//                                parentInfo[counter] = String.valueOf(cell.getNumericCellValue());
+                                row.addAll(String.valueOf(cell.getNumericCellValue()));
+//                                values.add(counter,String.valueOf(cell.getNumericCellValue()));
                                 break;
                         }
                         counter++;
                     }
-                    Student student = new Student(parentInfo[0], parentInfo[1], parentInfo[2]);
-                    studentData.addAll(student);
+                    System.out.println(row.toString());
+                    phoneNumberTableView.getItems().add(row);
+
+//                    phoneNumberTableView.getItems().add(values);
+//                    Student student = new Student(parentInfo[0], parentInfo[1], parentInfo[2]);
+//                    studentData.addAll(student);
                     rowCounter++;
                 }
-
                 workbook.close();
                 inputStream.close();
             } catch (IOException ex) {
@@ -469,8 +499,7 @@ public class Controller implements Initializable {
             }
         } catch (
                 FileNotFoundException ex
-                )
-        {
+                ) {
             ex.printStackTrace();
         }
 
@@ -508,6 +537,82 @@ public class Controller implements Initializable {
     public void enableTemplate() {
         messageTextArea.setDisable(true);
         templateTextArea.setDisable(false);
+    }
+
+
+    public void addColumnToTable(List<String> columnNames) {
+        List<String> columns = columnNames;
+        TableColumn[] tableColumns = new TableColumn[columns.size()];
+        int columnIndex = 0;
+        for (int i = 0; i < columns.size(); i++) {
+            final int j = i;
+            TableColumn col = new TableColumn(columns.get(i));
+
+            col.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ObservableList, String>, ObservableValue<String>>() {
+                public ObservableValue<String> call(TableColumn.CellDataFeatures<ObservableList, String> param) {
+                    return new SimpleStringProperty(param.getValue().get(j).toString());
+                }
+            });
+            phoneNumberTableView.getColumns().addAll(col);
+        }
+    }
+
+    public void updateTemplateMessage() {
+        /*
+        TableColumn col = (TableColumn<?,?>)phoneNumberTableView.getColumns().get(0);
+        String data = (String) col.getCellObservableValue(0).getValue();
+        System.out.println(data);
+*/
+
+//        System.out.println(phoneNumberTableView.getColumns().get(0));
+//        int rowIndex = phoneNumberTableView.getSelectionModel().getSelectedIndex();
+//        ObservableList rowList =
+//                (ObservableList) phoneNumberTableView.getItems().get(0);
+//
+//        System.out.println(rowList.toString());
+//        int columnIndex = 0;
+//        int value = Integer.parseInt(rowList.get(columnIndex).toString());
+//        System.out.println(value);
+    }
+
+    public void removeTemplateMessage() {
+    }
+
+
+    public void addRowToTable() {
+//        ObservableList<String> row = FXCollections.observableArrayList();
+        ObservableList<String> row1 = FXCollections.observableArrayList();
+//        row.addAll("d1");
+//        row.addAll("d11");
+        row1.addAll("d2");
+        row1.addAll("d22");
+        phoneNumberTableView.getItems().add(row1);
+    }
+
+    public void test() {
+        List<String> columns = new ArrayList<String>();
+        columns.add("col1");
+        columns.add("col2");
+        TableColumn[] tableColumns = new TableColumn[columns.size()];
+        int columnIndex = 0;
+        for (int i = 0; i < columns.size(); i++) {
+            final int j = i;
+            TableColumn col = new TableColumn(columns.get(i));
+            col.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ObservableList, String>, ObservableValue<String>>() {
+                public ObservableValue<String> call(TableColumn.CellDataFeatures<ObservableList, String> param) {
+                    return new SimpleStringProperty(param.getValue().get(j).toString());
+                }
+            });
+            phoneNumberTableView.getColumns().addAll(col);
+        }
+        ObservableList<String> row = FXCollections.observableArrayList();
+        ObservableList<String> row1 = FXCollections.observableArrayList();
+        row.addAll("d1");
+        row.addAll("d11");
+        row1.addAll("d2");
+        row1.addAll("d22");
+        phoneNumberTableView.getItems().add(row);
+        phoneNumberTableView.getItems().add(row1);
     }
 
 }

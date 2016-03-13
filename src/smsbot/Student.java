@@ -1,6 +1,10 @@
 package smsbot;
 
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by shohei on 3/13/16.
@@ -10,11 +14,21 @@ public class Student {
     private final SimpleStringProperty lastName;
     private final SimpleStringProperty telephone;
 
+//    private final int numSubjects;
+//    private final List<SimpleIntegerProperty> subjects;
 
     public Student(String fName, String lName, String telephone) {
         this.firstName = new SimpleStringProperty(fName);
         this.lastName = new SimpleStringProperty(lName);
         this.telephone = new SimpleStringProperty(telephone);
+//        this.numSubjects = numSubjects;
+
+//        subjects =  new ArrayList<>();
+//
+//        for(int i=0;i<numSubjects;i++){
+//            subjects.add(i,new SimpleIntegerProperty(...));
+//        }
+
     }
 
     public String getFirstName() {
