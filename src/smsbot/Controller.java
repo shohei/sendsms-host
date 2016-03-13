@@ -194,7 +194,7 @@ public class Controller implements Initializable {
                         for (int i = 0; i < row_length-1; i++) {
                             //Sleep speed does not affect wrong communication
                             //To be Improved: Resend message when fail
-                            Thread.sleep(2000);
+                            Thread.sleep(5000);//2000+3000
                             if(textRadioBtn.isSelected()){
                                 serialSendFreeText(i);
                             }else{
