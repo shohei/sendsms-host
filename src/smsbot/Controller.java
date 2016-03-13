@@ -115,13 +115,12 @@ public class Controller implements Initializable {
                 }
             } else if (ext.equals("xls") || ext.equals("XLS")) {//When old XLS format
                 phoneNumberTableView.getItems().removeAll(phoneNumberTableView.getItems());
+                phoneNumberTableView.getColumns().clear();
+                readXLS(file);
                 if (textRadioBtn.isSelected()) {
-                    phoneNumberTableView.getColumns().clear();
-                    readXLSForFreeText(file);
-//                    phoneNumberTableView.setItems(personsData);
+                    updateTemplateMessage();
                 } else {
-                    phoneNumberTableView.getColumns().clear();
-                    readXLSForTemplate(file);
+//                        removeTemplateMessage();//no need
                 }
             }
         }
@@ -131,9 +130,9 @@ public class Controller implements Initializable {
     public void doSendSms() {
         if (isMessageWritten()) {
             String msg;
-            if(textRadioBtn.isSelected()){
+            if (textRadioBtn.isSelected()) {
                 msg = messageTextArea.getText();
-            }else{
+            } else {
                 msg = templateTextArea.getText();
             }
             showAlertRemind(msg);
@@ -269,13 +268,13 @@ public class Controller implements Initializable {
     }
 
     public boolean isMessageWritten() {
-        if(textRadioBtn.isSelected()){
+        if (textRadioBtn.isSelected()) {
             if (messageTextArea.getLength() > 0) {
                 return true;
             } else {
                 return false;
             }
-        }else{
+        } else {
             if (templateTextArea.getLength() > 0) {
                 return true;
             } else {
@@ -311,7 +310,7 @@ public class Controller implements Initializable {
     }
 
 
-    public void readXLSForFreeText(File file) {
+    public void readXLS(File file) {
         try {
             POIFSFileSystem fs = new POIFSFileSystem(new FileInputStream(file));
             HSSFWorkbook wb = new HSSFWorkbook(fs);
@@ -325,6 +324,7 @@ public class Controller implements Initializable {
             int cols = 0; // No of columns
             int tmp = 0;
 
+
             // This trick ensures that we get the data properly even if it doesn't start from first few rows
             for (int i = 0; i < 10 || i < rows; i++) {
                 row = sheet.getRow(i);
@@ -334,27 +334,46 @@ public class Controller implements Initializable {
                 }
             }
 
+            columnNames = new ArrayList<>();
+
             for (int r = 0; r < rows; r++) {
                 row = sheet.getRow(r);
                 if (row != null) {
-                    int counter = 0;
-                    String[] parentInfo = new String[3];
+
                     if (r == 0 && isHeaderIncluded()) {
+                        for (int c = 0; c < cols; c++) {
+                            cell = row.getCell((short) c);
+                            if (cell != null) {
+                                columnNames.add(c, cell.getStringCellValue());
+                            }
+                        }
+
+                        addColumnToTable(columnNames);
                         continue;
                     }
+                    table_headers = columnNames;
+
+                    ObservableList<String> rowList = FXCollections.observableArrayList();
                     for (int c = 0; c < cols; c++) {
                         cell = row.getCell((short) c);
                         if (cell != null) {
-//                            System.out.println(cell.toString());
-                            if (counter < 3) {
-                                parentInfo[counter] = cell.toString();
+                            switch(cell.getCellType()) {
+                                case Cell.CELL_TYPE_STRING:
+                                    rowList.addAll(cell.getStringCellValue());
+                                    break;
+                                case Cell.CELL_TYPE_NUMERIC:
+                                    rowList.addAll(String.valueOf((int)cell.getNumericCellValue()));
+                                    break;
                             }
                         }
-                        counter++;
                     }
-                    Student student = new Student(parentInfo[0], parentInfo[1], parentInfo[2]);
-                    studentData.addAll(student);
+
+                    phoneNumberTableView.getItems().add(rowList);
+                    col_length = cols;
+//                    Student student = new Student(parentInfo[0], parentInfo[1], parentInfo[2]);
+//                    studentData.addAll(student);
                 }
+                row_length = r;
             }
         } catch (Exception ioe) {
             ioe.printStackTrace();
@@ -430,11 +449,6 @@ public class Controller implements Initializable {
 
     }
 
-
-    public void readXLSForTemplate(File file) {
-
-    }
-
     public void initComboBox() {
         java.util.Enumeration<CommPortIdentifier> portEnum = CommPortIdentifier.getPortIdentifiers();
         while (portEnum.hasMoreElements()) {
@@ -483,8 +497,8 @@ public class Controller implements Initializable {
     }
 
     //example for scanning table view
-    public void sliceAllTable(){
-        for (int i = 0; i < row_length-1; i++) {
+    public void sliceAllTable() {
+        for (int i = 0; i < row_length - 1; i++) {
             List<String> person = new ArrayList<>();
             for (int j = 0; j < col_length; j++) {
                 TableColumn col = (TableColumn<?, ?>) phoneNumberTableView.getColumns().get(j);
@@ -496,18 +510,18 @@ public class Controller implements Initializable {
     }
 
     public void updateTemplateMessage() {
-            List<String> p = new ArrayList<>();
-            for (int j = 0; j < col_length; j++) {
-                TableColumn col = (TableColumn<?, ?>) phoneNumberTableView.getColumns().get(j);
-                String data = (String) col.getCellObservableValue(0).getValue();
-                p.add(data);
-            }
+        List<String> p = new ArrayList<>();
+        for (int j = 0; j < col_length; j++) {
+            TableColumn col = (TableColumn<?, ?>) phoneNumberTableView.getColumns().get(j);
+            String data = (String) col.getCellObservableValue(0).getValue();
+            p.add(data);
+        }
 //            System.out.println(p);
 //            System.out.println(table_headers);
-            String template = "Score of "+p.get(0)+" "+p.get(1)+" "+" "+p.get(2)+"\n\n";
-            for(int i=4;i<col_length;i++){
-                template += table_headers.get(i) +": "+p.get(i)+"\n";
-            }
+        String template = "Score of " + p.get(0) + " " + p.get(1) + " " + " " + p.get(2) + "\n\n";
+        for (int i = 4; i < col_length; i++) {
+            template += table_headers.get(i) + ": " + p.get(i) + "\n";
+        }
 //        System.out.println(template);
         templateTextArea.setText(template);
 
