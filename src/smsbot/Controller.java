@@ -421,7 +421,7 @@ public class Controller implements Initializable {
                                     rowList.addAll(cell.getStringCellValue());
                                     break;
                                 case Cell.CELL_TYPE_NUMERIC:
-                                    rowList.addAll(String.valueOf((int)cell.getNumericCellValue()));
+                                    rowList.addAll(String.valueOf((long)cell.getNumericCellValue()));
                                     break;
                             }
                         }
@@ -483,7 +483,7 @@ public class Controller implements Initializable {
                                 row.addAll(cell.getStringCellValue());
                                 break;
                             case Cell.CELL_TYPE_NUMERIC:
-                                row.addAll(String.valueOf((int) cell.getNumericCellValue()));
+                                row.addAll(String.valueOf((long) cell.getNumericCellValue()));
                                 break;
                         }
                         col_counter++;

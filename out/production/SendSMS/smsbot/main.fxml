@@ -211,7 +211,7 @@
                                           <Insets left="10.0" />
                                        </HBox.margin>
                                     </Button>
-                                    <Button mnemonicParsing="false" onAction="#sendToSerialPort" text="debug">
+                                    <Button mnemonicParsing="false" onAction="#sendToSerialPort" text="debug" visible="false">
                                        <HBox.margin>
                                           <Insets left="10.0" />
                                        </HBox.margin>
