@@ -174,12 +174,12 @@ public class Controller implements Initializable {
                 };
             }
         };
-
-        ProgressDialog progDiag = new ProgressDialog(service);
-        progDiag.setTitle("Send in progress");
-        progDiag.setHeaderText("Sending SMS. Please wait until finished.message");
-        progDiag.initModality(Modality.WINDOW_MODAL);
+        ProgressDialog pd = new ProgressDialog(service);
+        pd.setContentText("Sending SMS....");
+        pd.setHeaderText("Please Wait...");
+        pd.initModality(Modality.WINDOW_MODAL);
         service.start();
+
     }
 
     @FXML
