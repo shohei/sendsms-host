@@ -1,18 +1,17 @@
 package smsbot;
 
-import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleStringProperty;
 
 /**
- * Created by shohei on 3/11/16.
+ * Created by shohei on 3/13/16.
  */
-public class Person {
+public class Student {
     private final SimpleStringProperty firstName;
     private final SimpleStringProperty lastName;
     private final SimpleStringProperty telephone;
 
 
-    public Person(String fName, String lName, String telephone) {
+    public Student(String fName, String lName, String telephone) {
         this.firstName = new SimpleStringProperty(fName);
         this.lastName = new SimpleStringProperty(lName);
         this.telephone = new SimpleStringProperty(telephone);

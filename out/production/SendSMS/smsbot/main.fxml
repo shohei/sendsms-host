@@ -136,7 +136,7 @@
                                     <Insets left="5.0" top="15.0" />
                                  </VBox.margin>
                               </HBox>
-                              <CheckBox fx:id="withHeaderCheckbox" mnemonicParsing="false" selected="true" text="With header">
+                              <CheckBox fx:id="withHeaderCheckbox" mnemonicParsing="false" selected="true" text="With header" visible="false">
                                  <VBox.margin>
                                     <Insets left="10.0" />
                                  </VBox.margin>
@@ -194,7 +194,7 @@
                                           <Insets left="10.0" />
                                        </HBox.margin>
                                     </Button>
-                                    <Button fx:id="reloadPortBtn" mnemonicParsing="false" onAction="#reloadSerialPort" text="Reload port">
+                                    <Button fx:id="reloadPortBtn" mnemonicParsing="false" onAction="#reloadSerialPort" text="Reload">
                                        <HBox.margin>
                                           <Insets left="10.0" />
                                        </HBox.margin>

@@ -2,7 +2,6 @@ package smsbot;
 
 
 import gnu.io.CommPortIdentifier;
-import gnu.io.NoSuchPortException;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -12,16 +11,10 @@ import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.VBoxBuilder;
-import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -36,10 +29,8 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
-import org.controlsfx.control.action.Action;
 import org.controlsfx.dialog.ProgressDialog;
 
-import java.awt.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -75,7 +66,8 @@ public class Controller implements Initializable {
     @FXML
     private RadioButton templateRadioBtn;
 
-    private ObservableList<Person> parentsData;
+    private ObservableList<Person> personsData;
+    private ObservableList<Student> studentData;
     private TableColumn firstNameCol;
     private TableColumn lastNameCol;
     private TableColumn telephoneCol;
@@ -83,12 +75,14 @@ public class Controller implements Initializable {
     public static final int MAX_SMS_LENGTH = 160;
     public static TwoWaySerialComm twoWaySerialComm;
 
+    private String[] columnNames;
 
     public void initialize(URL fxmlFileLocation, ResourceBundle resources) {
         initComboBox();
         initRadioGroup();
         initActionListenerForTextArea();
-        parentsData = FXCollections.observableArrayList();
+        personsData = FXCollections.observableArrayList();
+        studentData = FXCollections.observableArrayList();
 
         firstNameCol = new TableColumn("First Name");
         lastNameCol = new TableColumn("Last Name");
@@ -116,14 +110,24 @@ public class Controller implements Initializable {
             fileLoadLabel.setText("File location:");
             filePathLabel.setText(file.toPath().toString());
             String ext = FilenameUtils.getExtension(file.getAbsolutePath());
-            if (ext.equals("xlsx") || ext.equals("XLSX")) {
+            if (ext.equals("xlsx") || ext.equals("XLSX")) {//When new XLSX format
                 phoneNumberTableView.getItems().removeAll(phoneNumberTableView.getItems());
-                readXLSX(file);
-                phoneNumberTableView.setItems(parentsData);
-            } else if (ext.equals("xls") || ext.equals("XLS")) {
+                if (textRadioBtn.isSelected()) {
+                    readXLSXForFreeText(file);
+                    phoneNumberTableView.setItems(personsData);
+                } else {
+                    readXLSXForTemplate(file);
+                    phoneNumberTableView.setItems(studentData);
+                }
+            } else if (ext.equals("xls") || ext.equals("XLS")) {//When old XLS format
                 phoneNumberTableView.getItems().removeAll(phoneNumberTableView.getItems());
-                readXLS(file);
-                phoneNumberTableView.setItems(parentsData);
+                if (textRadioBtn.isSelected()) {
+                    readXLSForFreeText(file);
+                    phoneNumberTableView.setItems(personsData);
+                } else {
+                    readXLSForTemplate(file);
+                    phoneNumberTableView.setItems(studentData);
+                }
             }
         }
     }
@@ -196,7 +200,7 @@ public class Controller implements Initializable {
     @FXML
     public void disconnectFromSerialPort() {
 //        sender.disconnect();
-        if(twoWaySerialComm!=null){
+        if (twoWaySerialComm != null) {
             twoWaySerialComm.disconnect();
         }
         connectedLabel.setText("");
@@ -204,7 +208,7 @@ public class Controller implements Initializable {
     }
 
     @FXML
-    public void sendToSerialPort(){
+    public void sendToSerialPort() {
         String msg = "{\"tel\":\"23328503949\",\"message\":\"hello from TTI\"}";
         twoWaySerialComm.send(msg);
     }
@@ -213,7 +217,7 @@ public class Controller implements Initializable {
     public void connectToSerialPort() {
         try {
             String serialPort = serialComboBox.getValue();
-            twoWaySerialComm =  new TwoWaySerialComm();
+            twoWaySerialComm = new TwoWaySerialComm();
             twoWaySerialComm.connect(serialPort, 19200);
 //              sender = new SerialSender();
 //              sender.connect(serialPort,19200);
@@ -243,7 +247,7 @@ public class Controller implements Initializable {
         alert.setContentText("Following message will be sent:\n\n" + msg);
 
         Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() == ButtonType.OK){
+        if (result.get() == ButtonType.OK) {
             String message = messageTextArea.getText();
             System.out.println(message);
             messageSendingDialog();
@@ -293,7 +297,7 @@ public class Controller implements Initializable {
         }
     }
 
-    public void readXLSX(File file) {
+    public void readXLSXForFreeText(File file) {
         FileInputStream inputStream;
         try {
             inputStream = new FileInputStream(file);
@@ -330,7 +334,7 @@ public class Controller implements Initializable {
                         counter++;
                     }
                     Person person = new Person(parentInfo[0], parentInfo[1], parentInfo[2]);
-                    parentsData.addAll(person);
+                    personsData.addAll(person);
                     rowCounter++;
                 }
 
@@ -349,7 +353,7 @@ public class Controller implements Initializable {
 
     }
 
-    public void readXLS(File file) {
+    public void readXLSForFreeText(File file) {
         try {
             POIFSFileSystem fs = new POIFSFileSystem(new FileInputStream(file));
             HSSFWorkbook wb = new HSSFWorkbook(fs);
@@ -390,13 +394,91 @@ public class Controller implements Initializable {
                         }
                         counter++;
                     }
-                    Person person = new Person(parentInfo[0], parentInfo[1], parentInfo[2]);
-                    parentsData.addAll(person);
+                    Student student = new Student(parentInfo[0], parentInfo[1], parentInfo[2]);
+                    studentData.addAll(student);
                 }
             }
         } catch (Exception ioe) {
             ioe.printStackTrace();
         }
+    }
+
+    public void readXLSXForTemplate(File file) {
+        FileInputStream inputStream;
+        try {
+            inputStream = new FileInputStream(file);
+            try {
+                Workbook workbook = new XSSFWorkbook(inputStream);
+                Sheet firstSheet = workbook.getSheetAt(0);
+                Iterator<Row> iterator = firstSheet.iterator();
+                //count the total length of column
+
+                Row nextRow1 = iterator.next();
+                Iterator<Cell> cellIterator1 = nextRow1.cellIterator();
+                int len = 0;
+                while (cellIterator1.hasNext()) {
+                    len++;
+                }
+
+                columnNames = new String[len];
+
+                int rowCounter = 0;
+                while (iterator.hasNext()) {
+                    Row nextRow = iterator.next();
+                    Iterator<Cell> cellIterator = nextRow.cellIterator();
+
+                    //Only for first line. Needed for parsing title header
+                    if (rowCounter == 0 && isHeaderIncluded()) {
+                        int counter = 0;
+                        while (cellIterator.hasNext()) {
+                            Cell cell = cellIterator.next();
+                            switch (cell.getCellType()) {
+                                case Cell.CELL_TYPE_STRING:
+                                    columnNames[counter] = cell.getStringCellValue();
+                                    break;
+                            }
+                            counter++;
+                        }
+                        rowCounter++;//for this, never called again in loop
+                        continue;
+                    }
+
+                    int counter = 0;
+                    String[] parentInfo = new String[3];
+                    while (cellIterator.hasNext()) {
+                        Cell cell = cellIterator.next();
+                        switch (cell.getCellType()) {
+                            case Cell.CELL_TYPE_STRING:
+                                parentInfo[counter] = cell.getStringCellValue();
+                                break;
+                            case Cell.CELL_TYPE_NUMERIC:
+                                parentInfo[counter] = String.valueOf(cell.getNumericCellValue());
+                                break;
+                        }
+                        counter++;
+                    }
+                    Student student = new Student(parentInfo[0], parentInfo[1], parentInfo[2]);
+                    studentData.addAll(student);
+                    rowCounter++;
+                }
+
+                workbook.close();
+                inputStream.close();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        } catch (
+                FileNotFoundException ex
+                )
+        {
+            ex.printStackTrace();
+        }
+
+    }
+
+
+    public void readXLSForTemplate(File file) {
+
     }
 
     public void initComboBox() {
@@ -408,7 +490,7 @@ public class Controller implements Initializable {
         }
     }
 
-    public void initRadioGroup(){
+    public void initRadioGroup() {
         final ToggleGroup group = new ToggleGroup();
         textRadioBtn.setToggleGroup(group);
         textRadioBtn.setSelected(true);
@@ -417,13 +499,13 @@ public class Controller implements Initializable {
     }
 
     @FXML
-    public void enableFreeText(){
+    public void enableFreeText() {
         messageTextArea.setDisable(false);
         templateTextArea.setDisable(true);
     }
 
     @FXML
-    public void enableTemplate(){
+    public void enableTemplate() {
         messageTextArea.setDisable(true);
         templateTextArea.setDisable(false);
     }
