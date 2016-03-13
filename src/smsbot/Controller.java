@@ -20,6 +20,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -189,8 +190,16 @@ public class Controller implements Initializable {
                             throws InterruptedException {
                         updateMessage("Sending message. . .");
                         updateProgress(0, row_length-1);
+                        System.out.println(row_length-1);
                         for (int i = 0; i < row_length-1; i++) {
-                            Thread.sleep(300);
+                            //Sleep speed does not affect wrong communication
+                            //To be Improved: Resend message when fail
+                            Thread.sleep(2000);
+                            if(textRadioBtn.isSelected()){
+                                serialSendFreeText(i);
+                            }else{
+                                serialSendTemplate(i);
+                            }
                             updateProgress(i + 1, row_length-1);
                             updateMessage("Sent " + (i + 1) + " message!");
                         }
@@ -207,6 +216,25 @@ public class Controller implements Initializable {
         service.start();
 
     }
+
+    public void serialSendFreeText(int row){
+        TableColumn col = (TableColumn<?, ?>) phoneNumberTableView.getColumns().get(3);
+        String telephone = (String) col.getCellObservableValue(row).getValue();
+        String freetext = messageTextArea.getText();
+        String escapedMsg = StringEscapeUtils.escapeJson(freetext);
+        String msg = "{\"tel\":\""+telephone+"\",\"message\":\""+escapedMsg+"\"}";
+        twoWaySerialComm.send(msg);
+    }
+
+    public void serialSendTemplate(int row){
+        TableColumn col = (TableColumn<?, ?>) phoneNumberTableView.getColumns().get(3);
+        String telephone = (String) col.getCellObservableValue(row).getValue();
+        String freetext = templateTextArea.getText();
+        String escapedMsg = StringEscapeUtils.escapeJson(freetext);
+        String msg = "{\"tel\":\""+telephone+"\",\"message\":\""+escapedMsg+"\"}";
+        twoWaySerialComm.send(msg);
+    }
+
 
     @FXML
     public void disconnectFromSerialPort() {
@@ -254,7 +282,7 @@ public class Controller implements Initializable {
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() == ButtonType.OK) {
             String message = messageTextArea.getText();
-            System.out.println(message);
+//            System.out.println(message);
             messageSendingDialog();
         } else {
         }

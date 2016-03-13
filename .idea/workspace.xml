@@ -107,12 +107,12 @@
       <file leaf-file-name="Controller.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/smsbot/Controller.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.587473">
-              <caret line="194" column="32" selection-start-line="194" selection-start-column="31" selection-end-line="194" selection-end-column="33" />
+            <state vertical-scroll-proportion="0.4038877">
+              <caret line="194" column="56" selection-start-line="194" selection-start-column="56" selection-end-line="194" selection-end-column="56" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#10072#10073#0" expanded="true" />
-                <element signature="e#10160#10161#0" expanded="true" />
+                <element signature="e#11489#11490#0" expanded="true" />
+                <element signature="e#11577#11578#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -185,7 +185,7 @@
         <entry file="file://$PROJECT_DIR$/SendSMS.iml">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="86" column="0" selection-start-line="86" selection-start-column="0" selection-end-line="86" selection-end-column="0" />
+              <caret line="96" column="0" selection-start-line="96" selection-start-column="0" selection-end-line="96" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -363,8 +363,8 @@
     <property name="MemberChooser.copyJavadoc" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
     <property name="js-jscs-nodeInterpreter" value="$USER_HOME$/.nodebrew/current/bin/node" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/lib/controlsfx-samples-8.40.10.jar!/" />
-    <property name="project.structure.last.edited" value="Artifacts" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/lib/commons-lang3-3.4.jar!/" />
+    <property name="project.structure.last.edited" value="Modules" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
     <property name="ignore_missing_gitignore" value="true" />
@@ -1115,12 +1115,12 @@
       <option name="number" value="Default" />
       <updated>1359379246138</updated>
       <workItem from="1359379250712" duration="1302000" />
-      <workItem from="1457709568409" duration="76189000" />
+      <workItem from="1457709568409" duration="78152000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="77491000" />
+    <option name="totallyTimeSpent" value="79454000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1280" height="800" extended-state="6" />
@@ -1199,8 +1199,8 @@
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#10072#10073#0" expanded="true" />
-            <element signature="e#10160#10161#0" expanded="true" />
+            <element signature="e#11489#11490#0" expanded="true" />
+            <element signature="e#11577#11578#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1243,7 +1243,7 @@
     <entry file="file://$PROJECT_DIR$/SendSMS.iml">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="86" column="0" selection-start-line="86" selection-start-column="0" selection-end-line="86" selection-end-column="0" />
+          <caret line="96" column="0" selection-start-line="96" selection-start-column="0" selection-end-line="96" selection-end-column="0" />
           <folding />
         </state>
       </provider>
@@ -1356,12 +1356,12 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/smsbot/Controller.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.587473">
-          <caret line="194" column="32" selection-start-line="194" selection-start-column="31" selection-end-line="194" selection-end-column="33" />
+        <state vertical-scroll-proportion="0.4038877">
+          <caret line="194" column="56" selection-start-line="194" selection-start-column="56" selection-end-line="194" selection-end-column="56" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#10072#10073#0" expanded="true" />
-            <element signature="e#10160#10161#0" expanded="true" />
+            <element signature="e#11489#11490#0" expanded="true" />
+            <element signature="e#11577#11578#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1372,7 +1372,7 @@
       <state key="ArtifactsStructureConfigurable.UI">
         <settings>
           <artifact-editor />
-          <last-edited>JavaFXApp</last-edited>
+          <last-edited>SendSMS:jar</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>
