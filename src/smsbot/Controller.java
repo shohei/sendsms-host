@@ -178,6 +178,7 @@ public class Controller implements Initializable {
         });
     }
 
+    //TODO:
     public void messageSendingDialog() {
         Service<Void> service = new Service<Void>() {
             @Override
@@ -186,14 +187,14 @@ public class Controller implements Initializable {
                     @Override
                     protected Void call()
                             throws InterruptedException {
-                        updateMessage("Finding friends . . .");
-                        updateProgress(0, 10);
-                        for (int i = 0; i < 10; i++) {
+                        updateMessage("Sending message. . .");
+                        updateProgress(0, row_length-1);
+                        for (int i = 0; i < row_length-1; i++) {
                             Thread.sleep(300);
-                            updateProgress(i + 1, 10);
-                            updateMessage("Found " + (i + 1) + " friends!");
+                            updateProgress(i + 1, row_length-1);
+                            updateMessage("Sent " + (i + 1) + " message!");
                         }
-                        updateMessage("Found all.");
+                        updateMessage("Message sent.");
                         return null;
                     }
                 };
