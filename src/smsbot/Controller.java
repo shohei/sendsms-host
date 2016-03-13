@@ -128,7 +128,7 @@ public class Controller implements Initializable {
                     if (!textRadioBtn.isSelected()) {
                         updateTemplateMessage();
                     } else {
-                        removeTemplateMessage();
+//                        removeTemplateMessage();//no need
                     }
                 }
             } else if (ext.equals("xls") || ext.equals("XLS")) {//When old XLS format
@@ -148,7 +148,13 @@ public class Controller implements Initializable {
     @FXML
     public void doSendSms() {
         if (isMessageWritten()) {
-            showAlertRemind();
+            String msg;
+            if(textRadioBtn.isSelected()){
+                msg = messageTextArea.getText();
+            }else{
+                msg = templateTextArea.getText();
+            }
+            showAlertRemind(msg);
         } else {
             showAlertNoMessage();
         }
@@ -257,8 +263,7 @@ public class Controller implements Initializable {
 //        alert.showAndWait();
 //    }
 
-    public void showAlertRemind() {
-        String msg = messageTextArea.getText();
+    public void showAlertRemind(String msg) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Confirmation");
         alert.setHeaderText("Are you sure to send SMS?");
@@ -282,10 +287,18 @@ public class Controller implements Initializable {
     }
 
     public boolean isMessageWritten() {
-        if (messageTextArea.getLength() > 0) {
-            return true;
-        } else {
-            return false;
+        if(textRadioBtn.isSelected()){
+            if (messageTextArea.getLength() > 0) {
+                return true;
+            } else {
+                return false;
+            }
+        }else{
+            if (templateTextArea.getLength() > 0) {
+                return true;
+            } else {
+                return false;
+            }
         }
     }
 
@@ -507,15 +520,13 @@ public class Controller implements Initializable {
                 String data = (String) col.getCellObservableValue(0).getValue();
                 p.add(data);
             }
-            System.out.println(p);
-
-            System.out.println(table_headers);
+//            System.out.println(p);
+//            System.out.println(table_headers);
             String template = "Score of "+p.get(0)+" "+p.get(1)+" "+" "+p.get(2)+"\n\n";
             for(int i=4;i<col_length;i++){
                 template += table_headers.get(i) +": "+p.get(i)+"\n";
             }
-
-        System.out.println(template);
+//        System.out.println(template);
         templateTextArea.setText(template);
 
     }
