@@ -64,6 +64,10 @@ public class Controller implements Initializable {
     private CheckBox withHeaderCheckbox;
     @FXML
     private Label messageLengthLabel;
+    @FXML
+    public Label connectedLabel;
+    @FXML
+    public Label disconnectedLabel;
 
     private ObservableList<Person> parentsData;
     private TableColumn firstNameCol;
@@ -188,6 +192,8 @@ public class Controller implements Initializable {
         if(twoWaySerialComm!=null){
             twoWaySerialComm.disconnect();
         }
+        connectedLabel.setText("");
+        disconnectedLabel.setText("Disconnected from device.");
     }
 
     @FXML
@@ -204,6 +210,8 @@ public class Controller implements Initializable {
             twoWaySerialComm.connect(serialPort, 19200);
 //              sender = new SerialSender();
 //              sender.connect(serialPort,19200);
+            connectedLabel.setText("Connected from device.");
+            disconnectedLabel.setText("");
         } catch (Exception e) {
             e.printStackTrace();
 //        } catch (SerialSender.PortAlreadyUsedException ex){

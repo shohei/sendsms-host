@@ -160,14 +160,23 @@
                                           <Insets />
                                        </HBox.margin>
                                     </ComboBox>
-                                    <Label text="Connected to device." textFill="#bc520c">
-                                       <VBox.margin>
-                                          <Insets left="50.0" top="10.0" />
-                                       </VBox.margin>
-                                       <HBox.margin>
-                                          <Insets left="20.0" />
-                                       </HBox.margin>
-                                    </Label>
+                                    <VBox>
+                                       <children>
+                                          <Label fx:id="connectedLabel" textFill="#2b9e72">
+                                             <VBox.margin>
+                                                <Insets left="10.0" />
+                                             </VBox.margin>
+                                          </Label>
+                                          <Label fx:id="disconnectedLabel" textFill="#c2272a">
+                                             <VBox.margin>
+                                                <Insets left="10.0" />
+                                             </VBox.margin>
+                                             <HBox.margin>
+                                                <Insets left="20.0" />
+                                             </HBox.margin>
+                                          </Label>
+                                       </children>
+                                    </VBox>
                                  </children>
                                  <VBox.margin>
                                     <Insets top="5.0" />
