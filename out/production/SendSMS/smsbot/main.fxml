@@ -52,7 +52,7 @@
                                  <children>
                                     <Label text="Message">
                                        <VBox.margin>
-                                          <Insets left="5.0" />
+                                          <Insets left="15.0" top="10.0" />
                                        </VBox.margin>
                                        <font>
                                           <Font name="System Bold" size="13.0" />
@@ -60,7 +60,7 @@
                                     </Label>
                                     <HBox>
                                        <children>
-                                          <RadioButton mnemonicParsing="false" text="Free text">
+                                          <RadioButton fx:id="textRadioBtn" mnemonicParsing="false" onAction="#enableFreeText" text="Free text">
                                              <VBox.margin>
                                                 <Insets left="10.0" top="10.0" />
                                              </VBox.margin>
@@ -87,12 +87,12 @@
                               </VBox>
                               <VBox>
                                  <children>
-                                    <RadioButton mnemonicParsing="false" text="Score">
+                                    <RadioButton fx:id="templateRadioBtn" mnemonicParsing="false" onAction="#enableTemplate" text="Template">
                                        <VBox.margin>
-                                          <Insets top="20.0" />
+                                          <Insets top="30.0" />
                                        </VBox.margin>
                                     </RadioButton>
-                                    <TextArea layoutX="278.0" prefHeight="180.0" prefWidth="194.0" promptText="Template">
+                                    <TextArea fx:id="templateTextArea" disable="true" layoutX="278.0" prefHeight="180.0" prefWidth="194.0" promptText="Template">
                                        <VBox.margin>
                                           <Insets left="20.0" right="20.0" top="15.0" />
                                        </VBox.margin>
@@ -136,7 +136,7 @@
                                     <Insets left="5.0" top="15.0" />
                                  </VBox.margin>
                               </HBox>
-                              <CheckBox fx:id="withHeaderCheckbox" mnemonicParsing="false" selected="true" text="WIth header">
+                              <CheckBox fx:id="withHeaderCheckbox" mnemonicParsing="false" selected="true" text="With header">
                                  <VBox.margin>
                                     <Insets left="10.0" />
                                  </VBox.margin>

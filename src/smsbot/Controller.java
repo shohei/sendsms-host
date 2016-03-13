@@ -53,6 +53,8 @@ public class Controller implements Initializable {
     @FXML
     private TextArea messageTextArea;
     @FXML
+    private TextArea templateTextArea;
+    @FXML
     private ComboBox<String> serialComboBox;
     @FXML
     private TableView phoneNumberTableView;
@@ -68,6 +70,10 @@ public class Controller implements Initializable {
     public Label connectedLabel;
     @FXML
     public Label disconnectedLabel;
+    @FXML
+    private RadioButton textRadioBtn;
+    @FXML
+    private RadioButton templateRadioBtn;
 
     private ObservableList<Person> parentsData;
     private TableColumn firstNameCol;
@@ -80,6 +86,7 @@ public class Controller implements Initializable {
 
     public void initialize(URL fxmlFileLocation, ResourceBundle resources) {
         initComboBox();
+        initRadioGroup();
         initActionListenerForTextArea();
         parentsData = FXCollections.observableArrayList();
 
@@ -401,5 +408,24 @@ public class Controller implements Initializable {
         }
     }
 
+    public void initRadioGroup(){
+        final ToggleGroup group = new ToggleGroup();
+        textRadioBtn.setToggleGroup(group);
+        textRadioBtn.setSelected(true);
+        templateRadioBtn.setToggleGroup(group);
+
+    }
+
+    @FXML
+    public void enableFreeText(){
+        messageTextArea.setDisable(false);
+        templateTextArea.setDisable(true);
+    }
+
+    @FXML
+    public void enableTemplate(){
+        messageTextArea.setDisable(true);
+        templateTextArea.setDisable(false);
+    }
 
 }
