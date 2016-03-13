@@ -65,8 +65,24 @@
       <library>
         <CLASSES>
           <root url="jar://$MODULE_DIR$/lib/controlsfx-8.40.10.jar!/" />
-          <root url="jar://$MODULE_DIR$/lib/controlsfx-samples-8.40.10.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" exported="">
+      <library>
+        <CLASSES>
           <root url="jar://$MODULE_DIR$/lib/fxsampler-1.0.9.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" exported="">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/controlsfx-samples-8.40.10.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES>

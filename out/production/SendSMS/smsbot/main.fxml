@@ -155,7 +155,7 @@
                               </CheckBox>
                            </children>
                         </VBox>
-                        <VBox layoutX="5.0" layoutY="25.0" AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="380.0">
+                        <VBox layoutX="5.0" layoutY="25.0" AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="360.0">
                            <children>
                               <Label layoutX="5.0" layoutY="25.0" text="Connect to device">
                                  <font>
@@ -211,7 +211,7 @@
                                           <Insets left="10.0" />
                                        </HBox.margin>
                                     </Button>
-                                    <Button mnemonicParsing="false" onAction="#sendToSerialPort" text="Send">
+                                    <Button mnemonicParsing="false" onAction="#sendToSerialPort" text="debug">
                                        <HBox.margin>
                                           <Insets left="10.0" />
                                        </HBox.margin>

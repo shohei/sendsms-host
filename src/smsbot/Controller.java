@@ -15,7 +15,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -31,7 +30,6 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.xmlbeans.impl.xb.xmlconfig.NamespaceList;
 import org.controlsfx.dialog.ProgressDialog;
 
 import java.io.File;
@@ -91,22 +89,6 @@ public class Controller implements Initializable {
         initComboBox();
         initRadioGroup();
         initActionListenerForTextArea();
-        personsData = FXCollections.observableArrayList();
-        studentData = FXCollections.observableArrayList();
-
-        firstNameCol = new TableColumn("First Name");
-        lastNameCol = new TableColumn("Last Name");
-        telephoneCol = new TableColumn("Telephone");
-        phoneNumberTableView.getColumns().addAll(firstNameCol, lastNameCol, telephoneCol);
-        firstNameCol.setCellValueFactory(
-                new PropertyValueFactory<Person, String>("firstName")
-        );
-        lastNameCol.setCellValueFactory(
-                new PropertyValueFactory<Person, String>("lastName")
-        );
-        telephoneCol.setCellValueFactory(
-                new PropertyValueFactory<Person, String>("telephone")
-        );
 
     }
 

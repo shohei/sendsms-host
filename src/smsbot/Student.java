@@ -1,10 +1,6 @@
 package smsbot;
 
-import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by shohei on 3/13/16.
