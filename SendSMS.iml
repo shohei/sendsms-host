@@ -5,12 +5,12 @@
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
     </content>
-    <orderEntry type="inheritedJdk" />
+    <orderEntry type="jdk" jdkName="1.8 (1)" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
-          <root url="jar://$USER_HOME$/Downloads/rxtx-2.1-7-bins-r2/RXTXcomm.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/commons-io-2.4.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -55,7 +55,7 @@
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/commons-io-2.4.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/RXTXcomm.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -64,19 +64,14 @@
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/jfxtras-labs-8.0-r1.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/controlsfx-8.40.10.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/controlsfx-samples-8.40.10.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/fxsampler-1.0.9.jar!/" />
         </CLASSES>
         <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library" exported="">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/controlsfx-8.0.5.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
+        <SOURCES>
+          <root url="jar://$MODULE_DIR$/lib/controlsfx-samples-8.40.10.jar!/" />
+        </SOURCES>
       </library>
     </orderEntry>
   </component>

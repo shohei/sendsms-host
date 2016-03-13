@@ -24,8 +24,6 @@ import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import jfxtras.labs.dialogs.MonologFXButton;
-import jfxtras.labs.dialogs.MonologFXButtonBuilder;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -38,8 +36,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.controlsfx.control.action.Action;
-import org.controlsfx.dialog.Dialog;
-import org.controlsfx.dialog.Dialogs;
+import org.controlsfx.dialog.ProgressDialog;
 
 import java.awt.*;
 import java.io.File;
@@ -48,6 +45,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Iterator;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class Controller implements Initializable {
@@ -129,11 +127,12 @@ public class Controller implements Initializable {
 
     @FXML
     public void showAboutDialog() {
-        Dialogs.create()
-                .title("About this software")
-                .masthead("SendSMS")
-                .message("(c)2016 Shohei Aoki. All Rights Reserved.")
-                .showInformation();
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("About this software");
+        alert.setHeaderText(null);
+        alert.setContentText("(c)2016 Shohei Aoki. All Rights Reserved.");
+
+        alert.showAndWait();
     }
 
 
@@ -175,11 +174,10 @@ public class Controller implements Initializable {
             }
         };
 
-        Dialogs.create()
-                .title("Progress dialog")
-                .masthead("Sending SMS. Please wait until finished.")
-                .showWorkerProgress(service);
-
+        ProgressDialog progDiag = new ProgressDialog(service);
+        progDiag.setTitle("Send in progress");
+        progDiag.setHeaderText("Sending SMS. Please wait until finished.message");
+        progDiag.initModality(Modality.WINDOW_MODAL);
         service.start();
     }
 
@@ -213,38 +211,36 @@ public class Controller implements Initializable {
     }
 
     public void showDialogPortUsed() {
-        Dialogs.create()
-                .title("Warning")
-                .masthead(null)
-                .message("Already connected to the serial port!\n" +
-                        "Disconnect and try again.")
-                .showInformation();
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Warning");
+        alert.setHeaderText(null);
+        alert.setContentText("Already connected to the serial port!\n" +
+                "Disconnect and try again.");
+        alert.showAndWait();
     }
 
     public void showAlertRemind() {
         String msg = messageTextArea.getText();
-        Action response = Dialogs.create()
-                .title("Confirmation ")
-                .masthead("Are you sure to send SMS?")
-                .message("Following message will be sent:\n\n" + msg)
-                .actions(Dialog.Actions.OK, Dialog.Actions.CANCEL)
-                .showConfirm();
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Confirmation");
+        alert.setHeaderText("Are you sure to send SMS?");
+        alert.setContentText("Following message will be sent:\n\n" + msg);
 
-        if (response == Dialog.Actions.OK) {
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.get() == ButtonType.OK){
             String message = messageTextArea.getText();
             System.out.println(message);
             messageSendingDialog();
         } else {
-            //do nothing
         }
     }
 
     public void showAlertNoMessage() {
-        Dialogs.create()
-                .title("Information")
-                .masthead(null)
-                .message("Please input message before sending SMS!")
-                .showInformation();
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Information");
+        alert.setHeaderText(null);
+        alert.setContentText("Please input message before sending SMS!");
+        alert.showAndWait();
     }
 
     public boolean isMessageWritten() {
