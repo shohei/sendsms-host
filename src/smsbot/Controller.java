@@ -60,6 +60,8 @@ public class Controller implements Initializable {
     @FXML
     private Label messageLengthLabel;
     @FXML
+    private Label messageLengthLabel2;
+    @FXML
     public Label connectedLabel;
     @FXML
     public Label disconnectedLabel;
@@ -82,6 +84,7 @@ public class Controller implements Initializable {
 
     public int row_length;
     public int col_length;
+    public List<String> table_headers;
 
     public void initialize(URL fxmlFileLocation, ResourceBundle resources) {
 
@@ -164,6 +167,7 @@ public class Controller implements Initializable {
 
     public void initActionListenerForTextArea() {
         messageLengthLabel.setText("0/" + String.valueOf(MAX_SMS_LENGTH));
+        messageLengthLabel2.setText("0/" + String.valueOf(MAX_SMS_LENGTH));
 
         messageTextArea.textProperty().addListener(new ChangeListener<String>() {
             @Override
@@ -174,6 +178,15 @@ public class Controller implements Initializable {
                 }
                 int mLength = messageTextArea.getLength();
                 messageLengthLabel.setText(String.valueOf(mLength) + "/" + String.valueOf(MAX_SMS_LENGTH));
+            }
+        });
+
+
+        templateTextArea.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(final ObservableValue<? extends String> observable, final String oldValue, final String newValue) {
+                int mLength = templateTextArea.getLength();
+                messageLengthLabel2.setText(String.valueOf(mLength) + "/" + String.valueOf(MAX_SMS_LENGTH));
             }
         });
     }
@@ -386,6 +399,7 @@ public class Controller implements Initializable {
                         addColumnToTable(columnNames);
                         continue;//needed!!
                     }
+                    table_headers = columnNames;
 
                     int col_counter = 0;
                     ObservableList<String> row = FXCollections.observableArrayList();
@@ -396,7 +410,7 @@ public class Controller implements Initializable {
                                 row.addAll(cell.getStringCellValue());
                                 break;
                             case Cell.CELL_TYPE_NUMERIC:
-                                row.addAll(String.valueOf(cell.getNumericCellValue()));
+                                row.addAll(String.valueOf((int) cell.getNumericCellValue()));
                                 break;
                         }
                         col_counter++;
@@ -473,6 +487,7 @@ public class Controller implements Initializable {
         }
     }
 
+    //example for scanning table view
     public void sliceAllTable(){
         for (int i = 0; i < row_length-1; i++) {
             List<String> person = new ArrayList<>();
@@ -486,13 +501,22 @@ public class Controller implements Initializable {
     }
 
     public void updateTemplateMessage() {
-            List<String> person = new ArrayList<>();
+            List<String> p = new ArrayList<>();
             for (int j = 0; j < col_length; j++) {
                 TableColumn col = (TableColumn<?, ?>) phoneNumberTableView.getColumns().get(j);
                 String data = (String) col.getCellObservableValue(0).getValue();
-                person.add(data);
+                p.add(data);
             }
-            System.out.println(person);
+            System.out.println(p);
+
+            System.out.println(table_headers);
+            String template = "Score of "+p.get(0)+" "+p.get(1)+" "+" "+p.get(2)+"\n\n";
+            for(int i=4;i<col_length;i++){
+                template += table_headers.get(i) +": "+p.get(i)+"\n";
+            }
+
+        System.out.println(template);
+        templateTextArea.setText(template);
 
     }
 
