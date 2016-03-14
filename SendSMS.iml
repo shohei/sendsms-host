@@ -55,15 +55,6 @@
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/RXTXcomm.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library" exported="">
-      <library>
-        <CLASSES>
           <root url="jar://$MODULE_DIR$/lib/controlsfx-8.40.10.jar!/" />
         </CLASSES>
         <JAVADOC />
@@ -94,6 +85,15 @@
       <library>
         <CLASSES>
           <root url="jar://$MODULE_DIR$/lib/commons-lang3-3.4.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" exported="">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/RXTXcomm.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

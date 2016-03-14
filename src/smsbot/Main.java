@@ -105,17 +105,21 @@ public class Main extends Application {
         if (OSUtils.is32bit()) {
             //load .dll for 32bit
             srcFile = tmpdir + "SendSMS" + java.io.File.separator + "rxtxSerial.dll";
+            System.out.println("32bit OS detected.");
         } else {
             //load .dll for 64bit
             srcFile = tmpdir + "SendSMS" + java.io.File.separator + "rxtxSerial64.dll";
+            System.out.println("64bit OS detected.");
         }
 
         //move .dll to java.library.path
         String destFile = System.getProperty("user.dir") + File.separator + "rxtxSerial.dll";
-        System.out.println("Copying rxtxSerial.dll to user.dir");
-        System.out.println("Destination: "+destFile);
         try {
-            copyFile(new File(srcFile),new File(destFile));
+            if(!new File(destFile).exists()){
+                System.out.println("Copying rxtxSerial.dll to user.dir");
+                System.out.println("Destination: "+destFile);
+                copyFile(new File(srcFile),new File(destFile));
+            }
             System.loadLibrary("rxtxSerial");
         } catch (IOException e){
             e.printStackTrace();

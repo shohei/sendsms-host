@@ -11,26 +11,22 @@ import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-
 import javafx.scene.control.*;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
 import org.controlsfx.dialog.ProgressDialog;
 
 import java.io.File;
@@ -84,6 +80,8 @@ public class Controller implements Initializable {
     public int row_length;
     public int col_length;
     public List<String> table_headers;
+
+    public static final int MIN_TABLE_LENGTH = 25;
 
     public void initialize(URL fxmlFileLocation, ResourceBundle resources) {
 
@@ -181,6 +179,7 @@ public class Controller implements Initializable {
 
     //TODO:
     public void messageSendingDialog() {
+        System.out.println("open progress dialog ");
         Service<Void> service = new Service<Void>() {
             @Override
             protected Task<Void> createTask() {
@@ -194,13 +193,15 @@ public class Controller implements Initializable {
                         for (int i = 0; i < row_length-1; i++) {
                             //Sleep speed does not affect wrong communication
                             //To be Improved: Resend message when fail
-                            Thread.sleep(5000);//2000+3000
                             if(textRadioBtn.isSelected()){
+                                System.out.println("Send free text");
                                 serialSendFreeText(i);
                             }else{
+                                System.out.println("Send free text");
                                 serialSendTemplate(i);
                             }
                             updateProgress(i + 1, row_length-1);
+                            Thread.sleep(5000);//2000+3000
                             updateMessage("Sent " + (i + 1) + " message!");
                         }
                         updateMessage("Message sent.");
@@ -222,10 +223,16 @@ public class Controller implements Initializable {
         String telephone = (String) col.getCellObservableValue(row).getValue();
         if(isValidPhoneNumber(telephone)){
             String freetext = messageTextArea.getText();
-            String escapedMsg = StringEscapeUtils.escapeJson(freetext);
+//            String escapedMsg = StringEscapeUtils.escapeJson(freetext);
+//            String escapedMsg = StringEscapeUtils.escapeJava(freetext);
+            String escapedMsg = freetext.replace("\"","\\\"");
+            String escapedMsg2 = escapedMsg.replace("\n","\\n");
             String parsedTel = parsePhoneNumber(telephone);
-            String msg = "{\"tel\":\""+parsedTel+"\",\"message\":\""+escapedMsg+"\"}";
+            String msg = "{\"tel\":\""+parsedTel+"\",\"message\":\""+escapedMsg2+"\"}";
+            System.out.println("sending "+row+" msg...");
             twoWaySerialComm.send(msg);
+        }else{
+            System.out.println("telephone number is invalid.");
         }
     }
 
@@ -233,11 +240,17 @@ public class Controller implements Initializable {
         TableColumn col = (TableColumn<?, ?>) phoneNumberTableView.getColumns().get(3);
         String telephone = (String) col.getCellObservableValue(row).getValue();
         if(isValidPhoneNumber(telephone)){
-            String freetext = templateTextArea.getText();
-            String escapedMsg = StringEscapeUtils.escapeJson(freetext);
+            String templateText = templateTextArea.getText();
+//            String escapedMsg = StringEscapeUtils.escapeJson(templateText);
+//            String escapedMsg = StringEscapeUtils.escapeJava(templateText);
+            String escapedMsg = templateText.replace("\"","\\\"");
+            String escapedMsg2 = escapedMsg.replace("\n","\\n");
             String parsedTel = parsePhoneNumber(telephone);
-            String msg = "{\"tel\":\""+parsedTel+"\",\"message\":\""+escapedMsg+"\"}";
+            String msg = "{\"tel\":\""+parsedTel+"\",\"message\":\""+escapedMsg2+"\"}";
+            System.out.println("sending "+row+" msg...");
             twoWaySerialComm.send(msg);
+        }else{
+            System.out.println("telephone number is invalid.");
         }
     }
 
@@ -263,7 +276,7 @@ public class Controller implements Initializable {
             String serialPort = serialComboBox.getValue();
             twoWaySerialComm = new TwoWaySerialComm();
             twoWaySerialComm.connect(serialPort, 19200);
-            connectedLabel.setText("Connected from device.");
+            connectedLabel.setText("Connected to device.");
             disconnectedLabel.setText("");
         } catch (Exception e) {
             e.printStackTrace();
@@ -342,22 +355,22 @@ public class Controller implements Initializable {
             case 12://233241943721 - with Int'l number
                 tel = "+" + phoneNumber;
                 return tel;
-            default:
-                return "";
         }
+        return "";
     }
 
     public boolean isValidPhoneNumber(String phoneNumber) {
-        switch (phoneNumber.length()){
+        int length = phoneNumber.length();
+        System.out.println("phone number length: "+length);
+        switch (length){
             case 9:
                 return true;
             case 10:
                 return true;
             case 12:
                 return true;
-            default:
-                return false;
         }
+        return false;
     }
 
     public boolean isHeaderIncluded() {
@@ -429,8 +442,6 @@ public class Controller implements Initializable {
 
                     phoneNumberTableView.getItems().add(rowList);
                     col_length = cols;
-//                    Student student = new Student(parentInfo[0], parentInfo[1], parentInfo[2]);
-//                    studentData.addAll(student);
                 }
                 row_length = r;
             }
@@ -488,6 +499,7 @@ public class Controller implements Initializable {
                         }
                         col_counter++;
                     }
+                    System.out.println(rowCounter);
                     phoneNumberTableView.getItems().add(row);
 
                     col_length = col_counter;
