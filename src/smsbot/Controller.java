@@ -82,6 +82,7 @@ public class Controller implements Initializable {
     public List<String> table_headers;
 
     public static final int MIN_TABLE_LENGTH = 25;
+    public static final int TEL_COL_NUMBER = 2;// 0:sirname,1:othername,2:telephone
 
     public void initialize(URL fxmlFileLocation, ResourceBundle resources) {
 
@@ -197,11 +198,11 @@ public class Controller implements Initializable {
                                 System.out.println("Send free text");
                                 serialSendFreeText(i);
                             }else{
-                                System.out.println("Send free text");
+                                System.out.println("Send template message");
                                 serialSendTemplate(i);
                             }
                             updateProgress(i + 1, row_length-1);
-                            Thread.sleep(5000);//2000+3000
+                            Thread.sleep(10000);//2000+3000
                             updateMessage("Sent " + (i + 1) + " message!");
                         }
                         updateMessage("Message sent.");
@@ -219,7 +220,7 @@ public class Controller implements Initializable {
     }
 
     public void serialSendFreeText(int row){
-        TableColumn col = (TableColumn<?, ?>) phoneNumberTableView.getColumns().get(3);
+        TableColumn col = (TableColumn<?, ?>) phoneNumberTableView.getColumns().get(TEL_COL_NUMBER);
         String telephone = (String) col.getCellObservableValue(row).getValue();
         if(isValidPhoneNumber(telephone)){
             String freetext = messageTextArea.getText();
@@ -237,12 +238,10 @@ public class Controller implements Initializable {
     }
 
     public void serialSendTemplate(int row){
-        TableColumn col = (TableColumn<?, ?>) phoneNumberTableView.getColumns().get(3);
+        TableColumn col = (TableColumn<?, ?>) phoneNumberTableView.getColumns().get(TEL_COL_NUMBER);
         String telephone = (String) col.getCellObservableValue(row).getValue();
         if(isValidPhoneNumber(telephone)){
-            String templateText = templateTextArea.getText();
-//            String escapedMsg = StringEscapeUtils.escapeJson(templateText);
-//            String escapedMsg = StringEscapeUtils.escapeJava(templateText);
+            String templateText = generateTemplateMessage(row);
             String escapedMsg = templateText.replace("\"","\\\"");
             String escapedMsg2 = escapedMsg.replace("\n","\\n");
             String parsedTel = parsePhoneNumber(telephone);
@@ -252,6 +251,28 @@ public class Controller implements Initializable {
         }else{
             System.out.println("telephone number is invalid.");
         }
+    }
+
+    public String generateTemplateMessage(int row){
+        List<String> p = new ArrayList<>();
+        for (int j = 0; j < col_length; j++) {
+            TableColumn col = (TableColumn<?, ?>) phoneNumberTableView.getColumns().get(j);
+            String data = (String) col.getCellObservableValue(row).getValue();
+            p.add(data);
+        }
+//            System.out.println(p);
+//            System.out.println(table_headers);
+        String sirname = p.get(0).substring(0,1).toUpperCase() + p.get(0).substring(1);
+        String othername = p.get(1).substring(0,1).toUpperCase() + p.get(1).substring(1);
+
+        String template = "Score of " + sirname+ ", " + othername+ "\n\n";
+        for (int i = TEL_COL_NUMBER+1; i < col_length; i++) {
+            template += table_headers.get(i) + ": " + p.get(i) + "\n";
+        }
+        template += "\nPrincipal, T.T.I.";
+//        System.out.println(template);
+        return template;
+
     }
 
 
@@ -581,21 +602,8 @@ public class Controller implements Initializable {
     }
 
     public void updateTemplateMessage() {
-        List<String> p = new ArrayList<>();
-        for (int j = 0; j < col_length; j++) {
-            TableColumn col = (TableColumn<?, ?>) phoneNumberTableView.getColumns().get(j);
-            String data = (String) col.getCellObservableValue(0).getValue();
-            p.add(data);
-        }
-//            System.out.println(p);
-//            System.out.println(table_headers);
-        String template = "Score of " + p.get(0) + " " + p.get(1) + " " + " " + p.get(2) + "\n\n";
-        for (int i = 4; i < col_length; i++) {
-            template += table_headers.get(i) + ": " + p.get(i) + "\n";
-        }
-//        System.out.println(template);
+        String template = generateTemplateMessage(0);
         templateTextArea.setText(template);
-
     }
 
     public void removeTemplateMessage() {
