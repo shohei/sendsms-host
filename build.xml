@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="SendSMS" default="default" basedir=".">        
+    <import file="nbproject/build-impl.xml"/>
+
+    <taskdef name="bundleapp"
+             classname="com.oracle.appbundler.AppBundlerTask"   
+             classpath="lib/appbundler-1.0.jar" />
+
+    <target name="bundle-buttonDemo">
+        <bundleapp outputdirectory="dist"
+            name="ButtonDemo"
+            displayname="Button Demo"
+            identifier="components.ButtonDemo"
+            mainclassname="components.ButtonDemo">
+            <classpath file="dist/ButtonDemo.jar" />
+        </bundleapp>
+    </target>
+
+</project>
